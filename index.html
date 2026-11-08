@@ -177,7 +177,6 @@ h1 { margin: 2px 0 0; font: 600 clamp(26px, 3.2vw, 38px)/1.05 var(--font-display
         <label><input type="checkbox" id="tgFlow" checked> Akış animasyonu</label>
         <label><input type="checkbox" id="tgTrans" checked> Şeffaf tanklar</label>
         <label><input type="checkbox" id="tgLabels" checked> Etiketler</label>
-        <label><input type="checkbox" id="tgRev"> Revizyonları vurgula</label>
       </div>
     </section>
 
@@ -198,7 +197,6 @@ h1 { margin: 2px 0 0; font: 600 clamp(26px, 3.2vw, 38px)/1.05 var(--font-display
     <section>
       <h2 class="sec">Parçalar</h2>
       <div id="list"></div>
-      <p class="muted" style="margin:12px 0 0">Kesik çerçeveli parçalar orijinal çizime göre revize edilen veya eklenen parçalardır.</p>
     </section>
   </aside>
 </div>
@@ -211,13 +209,13 @@ h1 { margin: 2px 0 0; font: 600 clamp(26px, 3.2vw, 38px)/1.05 var(--font-display
 
   // ---------- Component data ----------
   const COMPS = {
-    T1: { group: "Tanklar", name: "Kaynatma tankı", desc: "Evin atık suyu burada kaynar. İç yüzeyi PTFE kaplıdır; içinde iç içe geçmiş iki serpantin (S1, S2) ve üstte temizlik püskürtücüsü bulunur.", spec: [["Çalışma", "125 °C · 2,3 bar(a)"], ["Gövde", "AISI 316L, iç PTFE kaplama"], ["Emniyet ventili", "~3,5 bar"], ["Su seviyesi", "Serpantinlerin üstünde"]], rev: "Çalışma noktası 240 °C / 33,5 bar yerine 125 °C / 2,3 bar." },
+    T1: { group: "Tanklar", name: "Kaynatma tankı", desc: "Evin atık suyu burada kaynar. İç yüzeyi PTFE kaplıdır; içinde iç içe geçmiş iki serpantin (S1, S2) ve üstte temizlik püskürtücüsü bulunur.", spec: [["Çalışma", "125 °C · 2,3 bar(a)"], ["Gövde", "AISI 316L, iç PTFE kaplama"], ["Emniyet ventili", "~3,5 bar"], ["Su seviyesi", "Serpantinlerin üstünde"]] },
     T2: { group: "Tanklar", name: "Distilat toplama tankı", desc: "S2'de yoğuşan saf su V1'den geçip burada toplanır. Çözünmüş gazlar üstteki G1 haznesine yükselir.", spec: [["Malzeme", "AISI 316L"]] },
     T3: { group: "Tanklar", name: "Sıcak distilat tankı", desc: "Saf suyu biriktirir. Tabanından E1 eşanjörüne, yanından T5 sıcak su tankına beslenir. P2 temizlik suyunu buradan çeker.", spec: [["Malzeme", "AISI 316L"]] },
     T4: { group: "Tanklar", name: "Soğuk ürün tankı", desc: "E1'den gelen distilat burada S3 serpantiniyle soğutulur. Çekilen ısı K2 ile T1'e geri döner; su ısısı geri kazanılmış olarak çıkar.", spec: [["Malzeme", "AISI 316L"], ["Çıkış", "Çıkış 1 · soğuk saf su"]] },
-    T5: { group: "Tanklar", name: "Sıcak su tankı", desc: "Isısı geri kazanılmayan sıcak su çıkışını besler.", spec: [["Çıkış", "Çıkış 2 · sıcak su"]], rev: "Besleme soğuk T4 yerine sıcak T3'ten alındı; aksi halde sıcak su çıkışı mümkün olmaz." },
-    K1: { group: "Kompresör ve pompalar", name: "Buhar kompresörü (MVC)", desc: "T1'in üstündeki buharı emer, sıkıştırıp S2 serpantinine basar. Buhar doğrudan içme suyuna dönüştüğü için kompresör yağsızdır.", spec: [["Tip", "Yağsız, su enjeksiyonlu vidalı"], ["Basınç", "2,3 → 2,9 bar(a)"], ["Buhar debisi", "~16 m³/h"], ["Güç", "~0,4 kW (tahmini)"]], rev: "Santrifüj yerine yağsız vidalı: ev ölçeğindeki buhar debisi santrifüj için çok küçük." },
-    K2: { group: "Kompresör ve pompalar", name: "Isı pompası kompresörü", desc: "T4'teki ürün suyundan çekilen ısıyı S1 üzerinden T1'e basar. İlk çalıştırmada T1'i 125 °C'ye ısıtır.", spec: [["Tip", "Scroll (ev ölçeği)"], ["Akışkan", "R1233zd(E)"], ["Sıcaklıklar", "~10 °C → ~135 °C"]], rev: "Isı pompası akışkanı tanımlandı: R1233zd(E)." },
+    T5: { group: "Tanklar", name: "Sıcak su tankı", desc: "Isısı geri kazanılmayan sıcak su çıkışını besler.", spec: [["Çıkış", "Çıkış 2 · sıcak su"]] },
+    K1: { group: "Kompresör ve pompalar", name: "Buhar kompresörü (MVC)", desc: "T1'in üstündeki buharı emer, sıkıştırıp S2 serpantinine basar. Buhar doğrudan içme suyuna dönüştüğü için kompresör yağsızdır.", spec: [["Tip", "Yağsız, su enjeksiyonlu vidalı"], ["Basınç", "2,3 → 2,9 bar(a)"], ["Buhar debisi", "~16 m³/h"], ["Güç", "~0,4 kW (tahmini)"]] },
+    K2: { group: "Kompresör ve pompalar", name: "Isı pompası kompresörü", desc: "T4'teki ürün suyundan çekilen ısıyı S1 üzerinden T1'e basar. İlk çalıştırmada T1'i 125 °C'ye ısıtır.", spec: [["Tip", "Scroll (ev ölçeği)"], ["Akışkan", "R1233zd(E)"], ["Sıcaklıklar", "~10 °C → ~135 °C"]] },
     P1: { group: "Kompresör ve pompalar", name: "Transfer pompası", desc: "Distilatı T2'den T3'ün üst girişine basar." },
     P2: { group: "Kompresör ve pompalar", name: "Yüksek basınçlı temizlik pompası", desc: "T3'teki sıcak saf suyu T1'in püskürtme başlığına basar. PTFE yüzeye yapışmaya çalışan atıklar tabana iner ve blöfle atılır." },
     P3: { group: "Kompresör ve pompalar", name: "Soğuk su çıkış pompası", desc: "Dip borusuyla T4'ün tabanından çeker; ısısı geri kazanılmış soğuk saf suyu Çıkış 1'e verir." },
@@ -230,14 +228,14 @@ h1 { margin: 2px 0 0; font: 600 clamp(26px, 3.2vw, 38px)/1.05 var(--font-display
     V2: { group: "Vanalar ve hat", name: "Genleşme vanası", desc: "Isı pompası akışkanını genleştirip soğutur ve S3 evaporatörüne gönderir." },
     B1: { group: "Vanalar ve hat", name: "Blöf vanası", desc: "T1'deki konsantre ve çamur, iletkenlik sınırına ulaşınca bu vanadan kanalizasyona atılır." },
     H1: { group: "Vanalar ve hat", name: "Ana hat ve flanşlı T", desc: "Evin atık suyu sağdan girer, E1'de ön ısıtılır ve flanşlı T bağlantısından T1'e beslenir. Fazlası solda kanalizasyona gider.", spec: [["Akış yönü", "Sağdan sola"]] },
-    G1: { group: "Arıtma ve revizyonlar", name: "Gaz ayırıcı ve karbon filtre", desc: "Yoğuşmayan amonyak ve uçucu organikler (VOC) burada ayrılır. Aktif karbon yatağı, distilatla taşınan organikleri tutar.", spec: [["Dolgu", "Granül aktif karbon"], ["Çıkış", "Havalandırma vanası"]], rev: "Üstüne havalandırma vanası eklendi; yoğuşmayan gazlar artık sistemden atılıyor." },
-    SP: { group: "Arıtma ve revizyonlar", name: "Püskürtme başlığı", desc: "P2'nin bastığı temizlik suyunu T1 duvarlarına ve serpantinlere geniş açıyla dağıtır." },
-    IZ: { group: "Arıtma ve revizyonlar", name: "Kaba ızgara", desc: "Siyah sudaki iri katıları T1 girişinde tutar.", rev: "Yeni eklendi: katılar T bağlantısını tıkayabilir." },
-    D1: { group: "Arıtma ve revizyonlar", name: "Asit ve antiköpük dozlama", desc: "pH 5–6'da amonyak suda NH₄⁺ olarak kalır, kireçlenme de azalır. Antiköpük, deterjanlı gri suyun köpürmesini önler.", rev: "Yeni eklendi: aktif karbon amonyağı zayıf tutar." },
-    DM: { group: "Arıtma ve revizyonlar", name: "Damla tutucu (demister)", desc: "K1 emişindeki tel örgü ped; kaynayan sudan sıçrayan damlacıkların ürüne geçmesini önler.", rev: "Yeni eklendi." },
-    U1: { group: "Arıtma ve revizyonlar", name: "Mineralleştirme + UV", desc: "Kalsit kartuşu suya mineral ekler; UV lamba son dezenfeksiyon bariyeridir.", rev: "Yeni eklendi: mineralsiz distilat tatsız ve aşındırıcıdır." }
+    G1: { group: "Arıtma donanımı", name: "Gaz ayırıcı ve karbon filtre", desc: "Yoğuşmayan amonyak ve uçucu organikler (VOC) burada ayrılır. Aktif karbon yatağı, distilatla taşınan organikleri tutar.", spec: [["Dolgu", "Granül aktif karbon"], ["Çıkış", "Havalandırma vanası"]] },
+    SP: { group: "Arıtma donanımı", name: "Püskürtme başlığı", desc: "P2'nin bastığı temizlik suyunu T1 duvarlarına ve serpantinlere geniş açıyla dağıtır." },
+    IZ: { group: "Arıtma donanımı", name: "Kaba ızgara", desc: "Siyah sudaki iri katıları T1 girişinde tutar." },
+    D1: { group: "Arıtma donanımı", name: "Asit ve antiköpük dozlama", desc: "pH 5–6'da amonyak suda NH₄⁺ olarak kalır, kireçlenme de azalır. Antiköpük, deterjanlı gri suyun köpürmesini önler." },
+    DM: { group: "Arıtma donanımı", name: "Damla tutucu (demister)", desc: "K1 emişindeki tel örgü ped; kaynayan sudan sıçrayan damlacıkların ürüne geçmesini önler." },
+    U1: { group: "Arıtma donanımı", name: "Mineralleştirme + UV", desc: "Kalsit kartuşu suya mineral ekler; UV lamba son dezenfeksiyon bariyeridir." }
   };
-  const GROUPS = ["Tanklar", "Kompresör ve pompalar", "Isı transferi", "Vanalar ve hat", "Arıtma ve revizyonlar"];
+  const GROUPS = ["Tanklar", "Kompresör ve pompalar", "Isı transferi", "Vanalar ve hat", "Arıtma donanımı"];
 
   const OVERVIEW =
     '<p class="eyebrow">Genel bakış</p>' +
@@ -1020,7 +1018,6 @@ h1 { margin: 2px 0 0; font: 600 clamp(26px, 3.2vw, 38px)/1.05 var(--font-display
   tgFlow.checked = animate;
   bind("tgTrans", function (v) { transparentTanks = v; shells.forEach(applyShell); });
   bind("tgLabels", function (v) { showLabels = v; });
-  bind("tgRev", function (v) { showRev = v; paint(); });
 
   // ---------- Theme ----------
   function applyTheme() {

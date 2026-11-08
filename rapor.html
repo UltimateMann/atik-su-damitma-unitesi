@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Ev tipi atık su damıtma ünitesinin teknik raporu: çalışma prensibi, bileşenler, çevrimler, ekipman seçimi ve tasarım revizyonları.">
+<meta name="description" content="Ev tipi atık su damıtma ünitesinin teknik raporu: çalışma prensibi, bileşenler, çevrimler, ekipman seçimi ve güvenlik.">
 <title>Atık Su Damıtma Ünitesi – Teknik Rapor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -63,7 +63,7 @@ footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--line);
     <li><strong>Isı pompası:</strong> Ürün suyunu soğutan tanktan çekilen ısı kaynatma tankına geri basılır. Ürün soğuk çıkar, ısısı sistemde kalır.</li>
   </ul>
   <p>Kaynatma tankının iç yüzeyleri teflon (PTFE) kaplıdır. Biriken atıklar yüksek basınçlı su püskürtmesiyle temizlenir. Yoğuşmayan amonyak ve uçucu organikler ayrı bir haznede ayrılır ve aktif karbondan geçirilir.</p>
-  <div class="callout"><b>Revize çalışma noktası</b>Orijinal tasarımdaki 240 °C yerine kaynatma tankı <strong>125 °C / ~2,3 bar(a)</strong> değerinde çalıştırılır. Bu sıcaklık otoklav düzeyinde (≥121 °C) sterilizasyonu garanti eder; basınç, teflon ve ısı pompası kısıtlarını ortadan kaldırır.</div>
+  <div class="callout"><b>Çalışma noktası</b>Kaynatma tankı <strong>125 °C / ~2,3 bar(a)</strong> değerinde çalışır. Bu sıcaklık otoklav düzeyinde (≥121 °C) sterilizasyon sağlar.</div>
 
   <h2>Proses akışı</h2>
   <ol class="flow">
@@ -134,18 +134,17 @@ footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--line);
     </tbody>
   </table></div>
 
-  <h2>Çalışma koşulları ve tasarım revizyonu</h2>
-  <p>Kaynatma tankının tasarım sıcaklığı 240 °C'den <strong>125 °C</strong>'ye (izin verilen aralık 120–130 °C) düşürülmüştür. Damıtmada ayırma verimi sıcaklıkla belirgin şekilde artmaz; maddeleri ayıran şey uçuculuk farklarıdır. Buna karşılık basınç, malzeme ve enerji maliyeti sıcaklıkla hızla yükselir.</p>
+  <h2>Çalışma koşulları</h2>
+  <p>Kaynatma tankı <strong>125 °C</strong>'de (çalışma aralığı 120–130 °C) çalışır. Damıtmada maddeleri ayıran şey uçuculuk farklarıdır; bu sıcaklık hem tam sterilizasyon sağlar hem de basıncı düşük tutar.</p>
   <div class="table"><table>
-    <thead><tr><th>Kriter</th><th>240 °C (orijinal)</th><th>125 °C (revize)</th></tr></thead>
+    <thead><tr><th>Kriter</th><th>125 °C çalışma noktası</th></tr></thead>
     <tbody>
-      <tr><td>Kaynama basıncı</td><td class="num">~33,5 bar(a)</td><td class="num">~2,3 bar(a)</td></tr>
-      <tr><td>Patojen giderimi</td><td>Tam</td><td>Tam (otoklav standardı 121 °C)</td></tr>
-      <tr><td>PTFE kaplama</td><td>Sınırda; basınç altında buhar sızması ve kabarma</td><td>Rahat çalışma aralığı</td></tr>
-      <tr><td>Isı pompası akışkanı</td><td>Ticari akışkan yok</td><td>R1233zd(E), R1336mzz(Z) uygun</td></tr>
-      <tr><td>Isı pompası verimi</td><td>Elektrikli ısıtıcı düzeyine yakın</td><td>Kabul edilebilir</td></tr>
-      <tr><td>Kireçlenme</td><td>Çok yüksek</td><td>Orta; asit dozlamayla kontrol edilebilir</td></tr>
-      <tr><td>Basınçlı kap sınıfı</td><td>Ağır, ev içinde kabul edilmesi zor</td><td>Hafif; düdüklü tencere mertebesi</td></tr>
+      <tr><td>Kaynama basıncı</td><td class="num">~2,3 bar(a)</td></tr>
+      <tr><td>Patojen giderimi</td><td>Tam (otoklav standardı 121 °C)</td></tr>
+      <tr><td>PTFE kaplama</td><td>Rahat çalışma aralığı</td></tr>
+      <tr><td>Isı pompası akışkanı</td><td>R1233zd(E) veya R1336mzz(Z)</td></tr>
+      <tr><td>Kireçlenme</td><td>Asit dozlamayla kontrol edilir</td></tr>
+      <tr><td>Basınçlı kap sınıfı</td><td>Hafif; düdüklü tencere mertebesi</td></tr>
     </tbody>
   </table></div>
 
@@ -185,23 +184,6 @@ footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--line);
     </tbody>
   </table></div>
   <p><strong>Püskürtmeli temizlik:</strong> PTFE yüzeyin yapışma direnci çok düşük olduğu için P2, T3'teki sıcak saf suyu yüksek basınçla püskürterek T1 duvarlarına ve serpantinlere yapışmaya çalışan kalıntıları tabana indirir. Kalıntılar konsantreyle birlikte blöfle atılır. Hedef su geri kazanım oranı %80–90'dır.</p>
-
-  <h2>Tasarımdaki düzeltmeler</h2>
-  <p>Orijinal çizimin temel kurgusu (MVC + ısı pompası + ters akışlı eşanjör) doğrudur ve korunmuştur. Aşağıdaki düzeltmeler 3D modele işlenmiştir.</p>
-  <div class="table"><table>
-    <thead><tr><th>#</th><th>Konu</th><th>Düzeltme</th><th>Neden</th></tr></thead>
-    <tbody>
-      <tr><td class="num">1</td><td>Çalışma sıcaklığı</td><td>240 °C → 125 °C</td><td>Basınç 33,5 → 2,3 bar; PTFE ve ısı pompası sınırları</td></tr>
-      <tr><td class="num">2</td><td>Buhar kompresörü K1</td><td>Yağsız, su enjeksiyonlu vidalı</td><td>Yağ ürüne karışmamalı; debi santrifüj için çok küçük</td></tr>
-      <tr><td class="num">3</td><td>Isı pompası akışkanı</td><td>R1233zd(E), K2 scroll</td><td>~135 °C yoğuşmaya uygun, düşük GWP</td></tr>
-      <tr><td class="num">4</td><td>T5 beslemesi</td><td>Soğuk T4 yerine sıcak T3'ten</td><td>Aksi halde sıcak su çıkışı mümkün olmaz</td></tr>
-      <tr><td class="num">5</td><td>Yoğuşmayan gaz tahliyesi</td><td>G1 üstüne havalandırma vanası</td><td>Gazlar S2'de birikip ısı geçişini düşürür</td></tr>
-      <tr><td class="num">6</td><td>Amonyak kontrolü</td><td>Asit dozlama + isteğe bağlı zeolit</td><td>Aktif karbon amonyağı zayıf tutar</td></tr>
-      <tr><td class="num">7</td><td>Damla taşınması</td><td>Demister + antiköpük</td><td>Deterjanlı gri su köpürür</td></tr>
-      <tr><td class="num">8</td><td>Katı girişi</td><td>Kaba ızgara</td><td>Katılar T bağlantısını tıkayabilir</td></tr>
-      <tr><td class="num">9</td><td>İçme suyu kalitesi</td><td>Mineral kartuşu + UV lamba</td><td>Mineralsiz su tatsız ve aşındırıcıdır</td></tr>
-    </tbody>
-  </table></div>
 
   <h2>Güvenlik ve kontrol</h2>
   <p>125 °C'de bile T1 bir basınçlı kaptır ve basınçlı ekipman yönetmeliğine (PED 2014/68/EU) göre tasarlanmalıdır. Ürün suyu, kalitesi doğrulanmadan kullanıcıya verilmemelidir.</p>
