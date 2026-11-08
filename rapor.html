@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Ev tipi atık su damıtma ünitesinin teknik raporu: çalışma prensibi, bileşenler, çevrimler, ekipman seçimi ve tasarım revizyonları.">
+<title>Atık Su Damıtma Ünitesi – Teknik Rapor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single reading column (~70ch) with wide tables scrolling inside their own boxes. */
+:root {
+  --bg: #f4f6f7; --ink: #17232b; --muted: #586773; --line: #cbd4da; --accent: #0d6c78; --on-accent: #fff;
+  --soft: #e8edf0; --revize: #a8680f;
+  --font-display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0e1418; --ink: #e1e8ec; --muted: #92a1ab; --line: #26333c; --accent: #4fb5c1; --on-accent: #0b1418; --soft: #162028; --revize: #e3a64a; color-scheme: dark; }
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.6 var(--font-body); }
+.wrap { max-width: 860px; margin: 0 auto; padding-block: 28px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 36px; }
+nav a { font: 600 14px/1 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); text-decoration: none; border: 1px solid var(--accent); border-radius: 6px; padding: 10px 12px; }
+nav a:hover { background: var(--accent); color: var(--on-accent); }
+nav a:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.eyebrow { margin: 0; font: 600 13px/1.3 var(--font-display); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+h1 { margin: 6px 0 12px; font: 600 clamp(34px, 6vw, 52px)/1.02 var(--font-display); text-wrap: balance; }
+h2 { margin: 48px 0 12px; font: 600 28px/1.1 var(--font-display); text-wrap: balance; padding-top: 14px; border-top: 1px solid var(--line); }
+h3 { margin: 26px 0 8px; font: 600 20px/1.2 var(--font-display); letter-spacing: 0.02em; }
+p, li { max-width: 70ch; }
+.lead { font-size: 19px; }
+.meta { color: var(--muted); font-size: 15px; }
+.table { overflow-x: auto; margin: 14px 0; border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+th { font: 600 13px/1.3 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); background: var(--soft); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.code, .num { font-family: var(--font-mono); font-size: 14px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.code { color: var(--accent); font-weight: 500; }
+.callout { border-left: 3px solid var(--revize); padding: 8px 0 8px 14px; margin: 18px 0; }
+.callout b { color: var(--revize); font-family: var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; font-size: 14px; display: block; }
+ol.flow { padding-left: 1.4em; }
+ol.flow li { margin: 6px 0; }
+footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <p class="eyebrow">Teknik rapor · Kasım 2026</p>
+    <a href="index.html">← 3D modeli aç</a>
+  </nav>
+
+  <h1>Ev Tipi Atık Su Damıtma Ünitesi</h1>
+  <p class="lead">Bu makine bir evde oluşan gri ve siyah atık suyun tamamını <strong>damıtarak</strong> içilebilir kalitede suya çevirir. Su kaynatılır, buharı sıkıştırılıp yeniden yoğuşturulur; kirleticiler, tuzlar ve katılar kaynatma tankında kalır.</p>
+  <p>Sistem iki enerji geri kazanım çevrimiyle çalışır:</p>
+  <ul>
+    <li><strong>Mekanik buhar sıkıştırma (MVC):</strong> Kaynatma tankından çıkan buhar sıkıştırılır ve aynı tankın içindeki serpantinde yoğuşturulur. Yoğuşma ısısı yeni suyu kaynatır, yani buharlaşma ısısı sürekli geri dönüştürülür.</li>
+    <li><strong>Isı pompası:</strong> Ürün suyunu soğutan tanktan çekilen ısı kaynatma tankına geri basılır. Ürün soğuk çıkar, ısısı sistemde kalır.</li>
+  </ul>
+  <p>Kaynatma tankının iç yüzeyleri teflon (PTFE) kaplıdır. Biriken atıklar yüksek basınçlı su püskürtmesiyle temizlenir. Yoğuşmayan amonyak ve uçucu organikler ayrı bir haznede ayrılır ve aktif karbondan geçirilir.</p>
+  <div class="callout"><b>Revize çalışma noktası</b>Orijinal tasarımdaki 240 °C yerine kaynatma tankı <strong>125 °C / ~2,3 bar(a)</strong> değerinde çalıştırılır. Bu sıcaklık otoklav düzeyinde (≥121 °C) sterilizasyonu garanti eder; basınç, teflon ve ısı pompası kısıtlarını ortadan kaldırır.</div>
+
+  <h2>Proses akışı</h2>
+  <ol class="flow">
+    <li>Evin ham atık suyu ana hatta sağdan girer ve E1 eşanjörünün alt bölmesinde ön ısıtılır.</li>
+    <li>Flanşlı T bağlantısından, kaba ızgaradan geçerek T1 kaynatma tankına beslenir.</li>
+    <li>T1'de su 125 °C'de kaynar. Buhar, damla tutucudan geçip K1 kompresörüne emilir.</li>
+    <li>K1 buharı ~2,9 bar'a sıkıştırır; buhar S2 serpantininde yoğuşarak ısısını T1'deki suya verir.</li>
+    <li>Yoğuşan saf su (distilat) V1'den T2'ye akar. Yoğuşmayan gazlar G1'de ayrılıp karbon filtreden atmosfere verilir.</li>
+    <li>P1 distilatı T3 sıcak distilat tankına basar. T3'ten T5 sıcak su tankı beslenir (Çıkış 2).</li>
+    <li>T3'ün tabanından çıkan distilat E1'in üst bölmesinde gelen atık suyu ısıtır (ters akış) ve T4'e geçer.</li>
+    <li>T4'te S3 serpantini suyu soğutur; çekilen ısı K2 ısı pompasıyla T1'e geri basılır. P3 soğuk saf suyu mineral kartuşu ve UV'den geçirerek Çıkış 1'e verir.</li>
+    <li>T1'de biriken konsantre ve çamur, blöf vanasından kanalizasyona atılır. P2, T3'teki suyla T1 duvarlarını periyodik olarak püskürtüp temizler.</li>
+  </ol>
+
+  <h2>Sistem bileşenleri</h2>
+  <p>Sistem 5 tank, 2 kompresör, 4 pompa, 2 genleşme vanası ve 1 ısı eşanjöründen oluşur. Kodlar 3D modeldeki etiketlerle aynıdır.</p>
+  <div class="table"><table>
+    <thead><tr><th>Kod</th><th>Bileşen</th><th>Görevi</th></tr></thead>
+    <tbody>
+      <tr><td class="code">T1</td><td>Kaynatma tankı</td><td>Atık suyu 125 °C'de kaynatır; iç yüzeyi PTFE kaplı, içinde S1 ve S2 serpantinleri ve püskürtme başlığı</td></tr>
+      <tr><td class="code">S1</td><td>Isı pompası kondenser serpantini</td><td>Soğutucu akışkanın ısısını T1'deki suya verir</td></tr>
+      <tr><td class="code">S2</td><td>Buhar yoğuşturma serpantini</td><td>Sıkıştırılmış buharı yoğuşturur, ısısını T1'e verir</td></tr>
+      <tr><td class="code">K1</td><td>Buhar kompresörü (MVC)</td><td>T1 buharını ~2,3 bar'dan ~2,9 bar'a sıkıştırır</td></tr>
+      <tr><td class="code">K2</td><td>Isı pompası kompresörü</td><td>Soğuk tanktan çektiği ısıyı T1'e basar</td></tr>
+      <tr><td class="code">V1</td><td>Kondens vanası</td><td>Distilatı S2'den T2'ye bırakır</td></tr>
+      <tr><td class="code">V2</td><td>Genleşme vanası</td><td>Soğutucu akışkanı genleştirip soğutur</td></tr>
+      <tr><td class="code">T2</td><td>Distilat toplama tankı</td><td>Yoğuşan saf suyu toplar</td></tr>
+      <tr><td class="code">G1</td><td>Gaz ayırıcı ve karbon filtre</td><td>Amonyak ve VOC'leri ayırır, organikleri aktif karbonda tutar</td></tr>
+      <tr><td class="code">P1</td><td>Transfer pompası</td><td>Distilatı T2'den T3'e basar</td></tr>
+      <tr><td class="code">T3</td><td>Sıcak distilat tankı</td><td>Saf suyu biriktirir; temizlik suyunu sağlar</td></tr>
+      <tr><td class="code">P2</td><td>Temizlik pompası</td><td>T3 suyunu T1 duvarlarına püskürtür</td></tr>
+      <tr><td class="code">E1</td><td>Oluklu plakalı ısı eşanjörü</td><td>Sıcak distilat ile gelen atık su arasında ters akışlı ısı transferi</td></tr>
+      <tr><td class="code">T4</td><td>Soğuk ürün tankı</td><td>Distilatı soğutur; ısısı geri kazanılır</td></tr>
+      <tr><td class="code">S3</td><td>Isı pompası evaporatör serpantini</td><td>T4'teki suyun ısısını çeker</td></tr>
+      <tr><td class="code">P3</td><td>Soğuk su çıkış pompası</td><td>Isısı geri kazanılmış soğuk suyu verir (Çıkış 1)</td></tr>
+      <tr><td class="code">T5</td><td>Sıcak su tankı</td><td>Isısı geri kazanılmayan sıcak su çıkışı</td></tr>
+      <tr><td class="code">P4</td><td>Sıcak su çıkış pompası</td><td>Sıcak suyu verir (Çıkış 2)</td></tr>
+      <tr><td class="code">H1</td><td>Ana hat ve flanşlı T</td><td>Atık su girişi (sağdan sola), T1 beslemesi ve çamur tahliyesi</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Termodinamik çevrimler</h2>
+  <p>MVC çevrimi buharlaşma ısısının ~%95'ini geri dönüştürür; ısı pompası ise ürün suyundaki duyulur ısıyı geri kazanır. Aşağıdaki değerler 125 °C tasarım noktası için yaklaşık mühendislik tahminleridir.</p>
+  <h3>MVC (buhar) çevrimi — K1</h3>
+  <ol>
+    <li>T1'de su 125 °C / 2,3 bar(a)'da kaynar.</li>
+    <li>K1 doymuş buharı emer ve ~2,9 bar(a)'ya sıkıştırır; bu basınçta yoğuşma sıcaklığı ~132 °C'dir.</li>
+    <li>Buhar S2'de yoğuşur. Serpantin çevresindeki sudan ~7 K daha sıcak olduğu için ısıyı suya verir ve yeni buhar üretir.</li>
+    <li>Yoğuşan distilat V1'den geçip T2'ye akar.</li>
+  </ol>
+  <h3>Isı pompası çevrimi — K2</h3>
+  <ol>
+    <li>K2, R1233zd(E) gazını S3'ten (T4 içinde, ~10 °C) emer.</li>
+    <li>Gaz ~135 °C yoğuşma sıcaklığına sıkıştırılır ve S1'de yoğuşarak ısısını kaynayan suya verir.</li>
+    <li>Sıvı akışkan V2'de genleşip soğur ve S3'e döner; T4'teki suyu soğutur.</li>
+  </ol>
+  <h3>Tasarım noktası (örnek: 4 kişilik hane)</h3>
+  <div class="table"><table>
+    <thead><tr><th>Büyüklük</th><th>Değer</th><th>Not</th></tr></thead>
+    <tbody>
+      <tr><td>Distilat üretimi</td><td class="num">500 L/gün</td><td>~0,0058 kg/s buhar</td></tr>
+      <tr><td>T1 kaynama</td><td class="num">125 °C · 2,3 bar(a)</td><td>Otoklav eşiğinin üzerinde</td></tr>
+      <tr><td>S2 yoğuşma</td><td class="num">~132 °C · 2,9 bar(a)</td><td>K1 basınç oranı ~1,25</td></tr>
+      <tr><td>Geri dönen gizli ısı</td><td class="num">~12,7 kW</td><td>2.190 kJ/kg × 0,0058 kg/s</td></tr>
+      <tr><td>K1 buhar hacim debisi</td><td class="num">~16 m³/h</td><td>125 °C'de buhar ~0,77 m³/kg</td></tr>
+      <tr><td>K1 elektrik gücü</td><td class="num">~0,4 kW</td><td>Tahmini, η ≈ 0,6</td></tr>
+      <tr><td>Özgül enerji (K1)</td><td class="num">~10 kWh/m³</td><td>Doğrudan kaynatmaya göre ~60 kat az</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Çalışma koşulları ve tasarım revizyonu</h2>
+  <p>Kaynatma tankının tasarım sıcaklığı 240 °C'den <strong>125 °C</strong>'ye (izin verilen aralık 120–130 °C) düşürülmüştür. Damıtmada ayırma verimi sıcaklıkla belirgin şekilde artmaz; maddeleri ayıran şey uçuculuk farklarıdır. Buna karşılık basınç, malzeme ve enerji maliyeti sıcaklıkla hızla yükselir.</p>
+  <div class="table"><table>
+    <thead><tr><th>Kriter</th><th>240 °C (orijinal)</th><th>125 °C (revize)</th></tr></thead>
+    <tbody>
+      <tr><td>Kaynama basıncı</td><td class="num">~33,5 bar(a)</td><td class="num">~2,3 bar(a)</td></tr>
+      <tr><td>Patojen giderimi</td><td>Tam</td><td>Tam (otoklav standardı 121 °C)</td></tr>
+      <tr><td>PTFE kaplama</td><td>Sınırda; basınç altında buhar sızması ve kabarma</td><td>Rahat çalışma aralığı</td></tr>
+      <tr><td>Isı pompası akışkanı</td><td>Ticari akışkan yok</td><td>R1233zd(E), R1336mzz(Z) uygun</td></tr>
+      <tr><td>Isı pompası verimi</td><td>Elektrikli ısıtıcı düzeyine yakın</td><td>Kabul edilebilir</td></tr>
+      <tr><td>Kireçlenme</td><td>Çok yüksek</td><td>Orta; asit dozlamayla kontrol edilebilir</td></tr>
+      <tr><td>Basınçlı kap sınıfı</td><td>Ağır, ev içinde kabul edilmesi zor</td><td>Hafif; düdüklü tencere mertebesi</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Ekipman seçimi</h2>
+  <div class="table"><table>
+    <thead><tr><th></th><th>K1 – buhar (MVC)</th><th>K2 – ısı pompası</th></tr></thead>
+    <tbody>
+      <tr><td>Önerilen tip</td><td>Yağsız, su enjeksiyonlu vidalı</td><td>Scroll (ev ölçeği) veya vidalı</td></tr>
+      <tr><td>Akışkan</td><td>Su buharı (R718)</td><td>R1233zd(E)</td></tr>
+      <tr><td>Basınç oranı</td><td class="num">~1,25</td><td class="num">~10–15</td></tr>
+      <tr><td>Kritik şart</td><td>Yağ ürüne karışmamalı</td><td>Yüksek sıcaklığa uygun yağ ve conta</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Neden santrifüj değil:</strong> Santrifüj kompresörler büyük hacim debilerinde verimlidir. Ev ünitesinde buhar debisi yalnızca ~16 m³/h'tir; bu ölçekte santrifüj, 100.000 d/dk üzerinde dönen pahalı bir mikro-turbo gerektirir. Apartman veya site ölçeğinde (~10 m³/gün ve üzeri) santrifüj mantıklı bir seçenek olur.</p>
+  <div class="table"><table>
+    <thead><tr><th>Parça</th><th>Malzeme</th><th>Gerekçe</th></tr></thead>
+    <tbody>
+      <tr><td>T1 gövdesi</td><td>AISI 316L, içi PTFE kaplı</td><td>Kimyasal direnç, yapışmaz yüzey</td></tr>
+      <tr><td>S1, S2 serpantinleri</td><td>Titanyum veya dubleks 2205</td><td>Klorür ve amonyak korozyonu</td></tr>
+      <tr><td>T2–T5 tankları</td><td>AISI 316L</td><td>İçme suyu teması</td></tr>
+      <tr><td>E1 plakaları</td><td>AISI 316L oluklu plaka</td><td>Ters akışlı, sökülebilir temizlik</td></tr>
+      <tr><td>Contalar</td><td>EPDM (su), FKM (soğutucu)</td><td>Sıcaklık ve akışkan uyumu</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Kirletici giderimi</h2>
+  <p>Tuzlar, katılar, metaller ve patojenler buharlaşmadıkları için T1'de kalır. Asıl zorluk, buharla birlikte taşınan uçucu maddelerdir.</p>
+  <div class="table"><table>
+    <thead><tr><th>Kirletici</th><th>Kaynağı</th><th>Giderim yöntemi</th></tr></thead>
+    <tbody>
+      <tr><td>Patojenler</td><td>Siyah su</td><td>125 °C kaynama + damıtma</td></tr>
+      <tr><td>Tuzlar, metaller, deterjan</td><td>Gri su</td><td>T1'de konsantre olur, blöf ile atılır</td></tr>
+      <tr><td>Katılar ve çamur</td><td>Siyah su, mutfak</td><td>Kaba ızgara; tabanda birikir, periyodik blöf</td></tr>
+      <tr><td>Amonyak (NH₃)</td><td>İdrar, siyah su</td><td>Asit dozlama (pH 5–6): NH₄⁺ olarak suda kalır; kaçan kısım G1'den atılır</td></tr>
+      <tr><td>Uçucu organikler (VOC)</td><td>Kozmetik, temizlik ürünleri</td><td>G1'de ayrılır; çözünmüş kısım aktif karbonda tutulur</td></tr>
+      <tr><td>Damlacık taşınması</td><td>Kaynama, köpürme</td><td>Damla tutucu (demister) + antiköpük</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Püskürtmeli temizlik:</strong> PTFE yüzeyin yapışma direnci çok düşük olduğu için P2, T3'teki sıcak saf suyu yüksek basınçla püskürterek T1 duvarlarına ve serpantinlere yapışmaya çalışan kalıntıları tabana indirir. Kalıntılar konsantreyle birlikte blöfle atılır. Hedef su geri kazanım oranı %80–90'dır.</p>
+
+  <h2>Tasarımdaki düzeltmeler</h2>
+  <p>Orijinal çizimin temel kurgusu (MVC + ısı pompası + ters akışlı eşanjör) doğrudur ve korunmuştur. Aşağıdaki düzeltmeler 3D modele işlenmiştir.</p>
+  <div class="table"><table>
+    <thead><tr><th>#</th><th>Konu</th><th>Düzeltme</th><th>Neden</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td>Çalışma sıcaklığı</td><td>240 °C → 125 °C</td><td>Basınç 33,5 → 2,3 bar; PTFE ve ısı pompası sınırları</td></tr>
+      <tr><td class="num">2</td><td>Buhar kompresörü K1</td><td>Yağsız, su enjeksiyonlu vidalı</td><td>Yağ ürüne karışmamalı; debi santrifüj için çok küçük</td></tr>
+      <tr><td class="num">3</td><td>Isı pompası akışkanı</td><td>R1233zd(E), K2 scroll</td><td>~135 °C yoğuşmaya uygun, düşük GWP</td></tr>
+      <tr><td class="num">4</td><td>T5 beslemesi</td><td>Soğuk T4 yerine sıcak T3'ten</td><td>Aksi halde sıcak su çıkışı mümkün olmaz</td></tr>
+      <tr><td class="num">5</td><td>Yoğuşmayan gaz tahliyesi</td><td>G1 üstüne havalandırma vanası</td><td>Gazlar S2'de birikip ısı geçişini düşürür</td></tr>
+      <tr><td class="num">6</td><td>Amonyak kontrolü</td><td>Asit dozlama + isteğe bağlı zeolit</td><td>Aktif karbon amonyağı zayıf tutar</td></tr>
+      <tr><td class="num">7</td><td>Damla taşınması</td><td>Demister + antiköpük</td><td>Deterjanlı gri su köpürür</td></tr>
+      <tr><td class="num">8</td><td>Katı girişi</td><td>Kaba ızgara</td><td>Katılar T bağlantısını tıkayabilir</td></tr>
+      <tr><td class="num">9</td><td>İçme suyu kalitesi</td><td>Mineral kartuşu + UV lamba</td><td>Mineralsiz su tatsız ve aşındırıcıdır</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Güvenlik ve kontrol</h2>
+  <p>125 °C'de bile T1 bir basınçlı kaptır ve basınçlı ekipman yönetmeliğine (PED 2014/68/EU) göre tasarlanmalıdır. Ürün suyu, kalitesi doğrulanmadan kullanıcıya verilmemelidir.</p>
+  <div class="table"><table>
+    <thead><tr><th>Ölçüm / koruma</th><th>Yer</th><th>İşlev</th></tr></thead>
+    <tbody>
+      <tr><td>Emniyet ventili (~3,5 bar)</td><td>T1 üstü</td><td>Aşırı basınçta buharı güvenli hatta tahliye eder</td></tr>
+      <tr><td>Basınç ve sıcaklık sensörleri</td><td>T1, K1 basışı</td><td>K1 hızını ve K2 çalışmasını ayarlar</td></tr>
+      <tr><td>Seviye sensörleri</td><td>T1–T5</td><td>Besleme, pompa ve blöf kontrolü</td></tr>
+      <tr><td>İletkenlik sensörü</td><td>T1</td><td>Konsantrasyonu izler, blöfü başlatır</td></tr>
+      <tr><td>İletkenlik + TOC sensörü</td><td>T2 çıkışı</td><td>Ürün kötüyse T1'e geri gönderir</td></tr>
+      <tr><td>Amonyak sensörü</td><td>G1 çıkışı</td><td>Karbon filtre doyunca uyarır</td></tr>
+      <tr><td>Kontrol kartı (PLC)</td><td>Kumanda paneli</td><td>Başlatma, temizlik, blöf ve alarmlar</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>İlk çalıştırma:</strong> T1 soğukken MVC çevrimi kendini başlatamaz. Başlangıçta K2 ısı pompası veya küçük bir elektrikli ısıtıcı T1'i 125 °C'ye getirir; ardından K1 devreye girer.</p>
+
+  <footer>
+    Kavramsal tasarım raporu. Sayısal değerler yaklaşık mühendislik tahminleridir ve prototip testleriyle doğrulanmalıdır.
+    <br><a href="index.html" style="color:var(--accent)">3D modele dön</a>
+  </footer>
+</div>
+</body>
+</html>

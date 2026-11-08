@@ -1,0 +1,1077 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Isı pompası destekli buhar sıkıştırmalı ev tipi atık su damıtma ünitesinin interaktif 3D modeli.">
+<title>Atık Su Damıtma Ünitesi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; }
+.toplink { display: inline-flex; align-items: center; gap: 8px; font: 600 14px/1 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); text-decoration: none; border: 1px solid var(--accent); border-radius: 6px; padding: 10px 12px; align-self: flex-start; }
+.toplink:hover { background: var(--accent); color: var(--on-accent); }
+.toplink:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* Layout: full-height 3D stage on the left, technical data sheet on the right; stacks on phones. */
+:root {
+  --bg: #e8ecef;
+  --panel: #f6f8f9;
+  --ink: #17232b;
+  --muted: #586773;
+  --line: #cbd4da;
+  --accent: #0d6c78;
+  --on-accent: #ffffff;
+  --scene: #e1e7eb;
+  --grid-a: #b7c2ca;
+  --grid-b: #d0d8dd;
+  --chip: rgba(246, 248, 249, 0.92);
+  --revize: #a8680f;
+  --font-display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1418; --panel: #141c22; --ink: #e1e8ec; --muted: #92a1ab; --line: #26333c;
+    --accent: #4fb5c1; --on-accent: #0b1418; --scene: #111a20; --grid-a: #2b3943; --grid-b: #1c2830;
+    --chip: rgba(20, 28, 34, 0.9); --revize: #e3a64a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1418; --panel: #141c22; --ink: #e1e8ec; --muted: #92a1ab; --line: #26333c;
+  --accent: #4fb5c1; --on-accent: #0b1418; --scene: #111a20; --grid-a: #2b3943; --grid-b: #1c2830;
+  --chip: rgba(20, 28, 34, 0.9); --revize: #e3a64a; color-scheme: dark;
+}
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font: 400 15px/1.5 var(--font-body); }
+.app { display: grid; grid-template-columns: minmax(0, 1fr) 360px; height: 100%; }
+.stage { position: relative; min-width: 0; overflow: hidden; background: var(--scene); }
+#c { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+#c:active { cursor: grabbing; }
+.labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.lbl { position: absolute; left: 0; top: 0; white-space: nowrap; will-change: transform; }
+.lbl.chip {
+  pointer-events: auto; cursor: pointer; font: 500 11.5px/1 var(--font-mono); letter-spacing: 0.02em;
+  padding: 4px 6px; border-radius: 4px; background: var(--chip); color: var(--ink);
+  border: 1px solid var(--line);
+}
+.lbl.chip:hover { border-color: var(--accent); }
+.lbl.chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.lbl.chip.rev { border-style: dashed; border-color: var(--revize); }
+.lbl.chip.sel { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.lbl.tag {
+  font: 600 12.5px/1.2 var(--font-display); letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--muted); padding: 2px 4px;
+}
+.hud {
+  position: absolute; top: 0; left: 0; pointer-events: none;
+  padding-block: 18px 0; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: 16px;
+}
+.eyebrow {
+  margin: 0; font: 600 12px/1.3 var(--font-display); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+}
+h1 { margin: 2px 0 0; font: 600 clamp(26px, 3.2vw, 38px)/1.05 var(--font-display); letter-spacing: 0.01em; text-wrap: balance; }
+.views {
+  position: absolute; top: 16px; right: 16px; display: flex; gap: 0; border: 1px solid var(--line);
+  border-radius: 6px; overflow: hidden; background: var(--chip);
+}
+.views button {
+  font: 600 13px/1 var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+  background: transparent; border: 0; padding: 9px 12px; cursor: pointer;
+}
+.views button + button { border-left: 1px solid var(--line); }
+.views button.on { color: var(--on-accent); background: var(--accent); }
+.views button:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
+.hint {
+  position: absolute; left: 0; bottom: 0; margin: 0; pointer-events: none; color: var(--muted);
+  font: 400 12.5px/1.4 var(--font-body);
+  padding-block: 0 14px; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: 16px;
+}
+.panel {
+  background: var(--panel); border-left: 1px solid var(--line); overflow-y: auto; min-width: 0;
+  padding-block: 20px 28px; padding-left: 20px; padding-right: max(20px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 22px;
+}
+.panel h2.sec {
+  margin: 0 0 10px; font: 600 13px/1 var(--font-display); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+  padding-bottom: 8px; border-bottom: 1px solid var(--line);
+}
+.info { min-height: 210px; }
+.info .iname { margin: 4px 0 8px; font: 600 24px/1.1 var(--font-display); text-wrap: balance; }
+.info p { margin: 0 0 10px; max-width: 62ch; }
+.info .code { font: 500 12px/1 var(--font-mono); color: var(--accent); margin-right: 6px; letter-spacing: 0.04em; }
+.info dl { margin: 12px 0; display: grid; gap: 0; border-top: 1px solid var(--line); }
+.info dl div { display: grid; grid-template-columns: 9.5em minmax(0, 1fr); gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--line); }
+.info dt { color: var(--muted); font-size: 13.5px; }
+.info dd { margin: 0; font: 500 13.5px/1.4 var(--font-mono); font-variant-numeric: tabular-nums; }
+.info .rev { border-left: 3px solid var(--revize); padding: 6px 0 6px 10px; font-size: 14px; }
+.info .rev span { display: block; font: 600 12px/1.2 var(--font-display); letter-spacing: 0.1em; text-transform: uppercase; color: var(--revize); margin-bottom: 2px; }
+.muted { color: var(--muted); font-size: 13.5px; }
+.link { font: 500 14px/1 var(--font-body); color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.toggles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; }
+.toggles label { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
+.toggles input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
+.legend { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 14px; margin: 0; padding: 0; list-style: none; font-size: 13.5px; }
+.legend li { display: flex; align-items: center; gap: 8px; }
+.sw { width: 22px; height: 8px; border-radius: 4px; flex: none; }
+.group + .group { margin-top: 14px; }
+.group h3 { margin: 0 0 6px; font: 600 12px/1.2 var(--font-display); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.items { display: flex; flex-wrap: wrap; gap: 6px; }
+.items button {
+  display: inline-flex; align-items: baseline; gap: 6px; font: 400 13.5px/1.2 var(--font-body); color: var(--ink);
+  background: transparent; border: 1px solid var(--line); border-radius: 5px; padding: 6px 8px; cursor: pointer; text-align: left;
+}
+.items button b { font: 500 11.5px/1 var(--font-mono); color: var(--accent); }
+.items button.rev { border-style: dashed; border-color: var(--revize); }
+.items button:hover { border-color: var(--accent); }
+.items button.sel { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.items button.sel b { color: var(--on-accent); }
+.items button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.nogl { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; color: var(--muted); }
+@media (max-width: 860px) {
+  html, body { height: auto; }
+  .app { grid-template-columns: minmax(0, 1fr); height: auto; }
+  .stage { height: 62vh; min-height: 380px; }
+  .panel { border-left: 0; border-top: 1px solid var(--line); overflow: visible; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .views { top: auto; bottom: 44px; right: 16px; }
+  .hint { font-size: 12px; }
+}
+@media (max-width: 420px) {
+  .toggles, .legend { grid-template-columns: 1fr; }
+  .hint { display: none; }
+  .views { bottom: 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <section class="stage" id="stage" aria-label="3D model sahnesi">
+    <canvas id="c" aria-label="Atık su damıtma ünitesinin döndürülebilir 3D modeli"></canvas>
+    <div class="labels" id="labels"></div>
+    <header class="hud">
+      <p class="eyebrow">Isı pompası destekli MVC · 125 °C · 2,3 bar(a)</p>
+      <h1>Atık Su Damıtma Ünitesi</h1>
+    </header>
+    <div class="views" role="group" aria-label="Kamera görünümü">
+      <button type="button" data-view="iso" class="on">İzometrik</button>
+      <button type="button" data-view="front">Ön</button>
+      <button type="button" data-view="top">Üst</button>
+    </div>
+    <p class="hint">Sürükle: döndür · Tekerlek: yakınlaştır · Sağ tık: kaydır · Parçaya tıkla: bilgi</p>
+  </section>
+
+  <aside class="panel">
+    <a class="toplink" href="rapor.html">Teknik raporu oku →</a>
+    <section class="info" id="info" aria-live="polite"></section>
+
+    <section>
+      <h2 class="sec">Katmanlar</h2>
+      <div class="toggles">
+        <label><input type="checkbox" id="tgWater" checked> Su hattı</label>
+        <label><input type="checkbox" id="tgMvc" checked> Buhar (MVC)</label>
+        <label><input type="checkbox" id="tgHp" checked> Isı pompası</label>
+        <label><input type="checkbox" id="tgFlow" checked> Akış animasyonu</label>
+        <label><input type="checkbox" id="tgTrans" checked> Şeffaf tanklar</label>
+        <label><input type="checkbox" id="tgLabels" checked> Etiketler</label>
+        <label><input type="checkbox" id="tgRev"> Revizyonları vurgula</label>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="sec">Akışkanlar</h2>
+      <ul class="legend">
+        <li><span class="sw" style="background:#8b6b42"></span>Ham atık su</li>
+        <li><span class="sw" style="background:#5b4630"></span>Konsantre / blöf</li>
+        <li><span class="sw" style="background:#9fb4c7"></span>Su buharı</li>
+        <li><span class="sw" style="background:#e07b39"></span>Sıcak distilat</li>
+        <li><span class="sw" style="background:#2e86c1"></span>Soğuk saf su</li>
+        <li><span class="sw" style="background:#8e5cc9"></span>Isı pompası akışkanı</li>
+        <li><span class="sw" style="background:#9aa63a"></span>NH₃ / VOC gazı</li>
+        <li><span class="sw" style="background:#c44f6a"></span>Kimyasal dozlama</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="sec">Parçalar</h2>
+      <div id="list"></div>
+      <p class="muted" style="margin:12px 0 0">Kesik çerçeveli parçalar orijinal çizime göre revize edilen veya eklenen parçalardır.</p>
+    </section>
+  </aside>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  // ---------- Component data ----------
+  const COMPS = {
+    T1: { group: "Tanklar", name: "Kaynatma tankı", desc: "Evin atık suyu burada kaynar. İç yüzeyi PTFE kaplıdır; içinde iç içe geçmiş iki serpantin (S1, S2) ve üstte temizlik püskürtücüsü bulunur.", spec: [["Çalışma", "125 °C · 2,3 bar(a)"], ["Gövde", "AISI 316L, iç PTFE kaplama"], ["Emniyet ventili", "~3,5 bar"], ["Su seviyesi", "Serpantinlerin üstünde"]], rev: "Çalışma noktası 240 °C / 33,5 bar yerine 125 °C / 2,3 bar." },
+    T2: { group: "Tanklar", name: "Distilat toplama tankı", desc: "S2'de yoğuşan saf su V1'den geçip burada toplanır. Çözünmüş gazlar üstteki G1 haznesine yükselir.", spec: [["Malzeme", "AISI 316L"]] },
+    T3: { group: "Tanklar", name: "Sıcak distilat tankı", desc: "Saf suyu biriktirir. Tabanından E1 eşanjörüne, yanından T5 sıcak su tankına beslenir. P2 temizlik suyunu buradan çeker.", spec: [["Malzeme", "AISI 316L"]] },
+    T4: { group: "Tanklar", name: "Soğuk ürün tankı", desc: "E1'den gelen distilat burada S3 serpantiniyle soğutulur. Çekilen ısı K2 ile T1'e geri döner; su ısısı geri kazanılmış olarak çıkar.", spec: [["Malzeme", "AISI 316L"], ["Çıkış", "Çıkış 1 · soğuk saf su"]] },
+    T5: { group: "Tanklar", name: "Sıcak su tankı", desc: "Isısı geri kazanılmayan sıcak su çıkışını besler.", spec: [["Çıkış", "Çıkış 2 · sıcak su"]], rev: "Besleme soğuk T4 yerine sıcak T3'ten alındı; aksi halde sıcak su çıkışı mümkün olmaz." },
+    K1: { group: "Kompresör ve pompalar", name: "Buhar kompresörü (MVC)", desc: "T1'in üstündeki buharı emer, sıkıştırıp S2 serpantinine basar. Buhar doğrudan içme suyuna dönüştüğü için kompresör yağsızdır.", spec: [["Tip", "Yağsız, su enjeksiyonlu vidalı"], ["Basınç", "2,3 → 2,9 bar(a)"], ["Buhar debisi", "~16 m³/h"], ["Güç", "~0,4 kW (tahmini)"]], rev: "Santrifüj yerine yağsız vidalı: ev ölçeğindeki buhar debisi santrifüj için çok küçük." },
+    K2: { group: "Kompresör ve pompalar", name: "Isı pompası kompresörü", desc: "T4'teki ürün suyundan çekilen ısıyı S1 üzerinden T1'e basar. İlk çalıştırmada T1'i 125 °C'ye ısıtır.", spec: [["Tip", "Scroll (ev ölçeği)"], ["Akışkan", "R1233zd(E)"], ["Sıcaklıklar", "~10 °C → ~135 °C"]], rev: "Isı pompası akışkanı tanımlandı: R1233zd(E)." },
+    P1: { group: "Kompresör ve pompalar", name: "Transfer pompası", desc: "Distilatı T2'den T3'ün üst girişine basar." },
+    P2: { group: "Kompresör ve pompalar", name: "Yüksek basınçlı temizlik pompası", desc: "T3'teki sıcak saf suyu T1'in püskürtme başlığına basar. PTFE yüzeye yapışmaya çalışan atıklar tabana iner ve blöfle atılır." },
+    P3: { group: "Kompresör ve pompalar", name: "Soğuk su çıkış pompası", desc: "Dip borusuyla T4'ün tabanından çeker; ısısı geri kazanılmış soğuk saf suyu Çıkış 1'e verir." },
+    P4: { group: "Kompresör ve pompalar", name: "Sıcak su çıkış pompası", desc: "T5'teki sıcak suyu Çıkış 2'ye verir." },
+    S1: { group: "Isı transferi", name: "Isı pompası kondenser serpantini", desc: "K2'den gelen sıcak R1233zd(E) gazı bu serpantinde yoğuşur ve ısısını T1'deki suya verir. S2 ile iç içe sarılmıştır.", spec: [["Yoğuşma", "~135 °C"], ["Malzeme", "Titanyum / dubleks 2205"]] },
+    S2: { group: "Isı transferi", name: "Buhar yoğuşturma serpantini", desc: "K1 ile sıkıştırılan buhar burada yoğuşur. Yoğuşma ısısı çevresindeki suyu kaynatır; yoğuşan su saf distilattır.", spec: [["Yoğuşma", "~132 °C · 2,9 bar(a)"], ["Malzeme", "Titanyum / dubleks 2205"]] },
+    S3: { group: "Isı transferi", name: "Isı pompası evaporatör serpantini", desc: "Isı pompası akışkanı burada buharlaşır ve T4'teki suyun ısısını çeker.", spec: [["Buharlaşma", "~10 °C"]] },
+    E1: { group: "Isı transferi", name: "Oluklu plakalı ısı eşanjörü", desc: "Üst bölmede sıcak distilat T3'ten T4'e, alt bölmede ham atık su ters yönde akar. Distilat soğurken gelen atık su ön ısıtılır.", spec: [["Düzen", "Ters akış"], ["Plaka", "AISI 316L, oluklu"]] },
+    V1: { group: "Vanalar ve hat", name: "Kondens vanası", desc: "S2'de yoğuşan distilatı basınçlı serpantinden T2'ye bırakır; buharın kaçmasını önler." },
+    V2: { group: "Vanalar ve hat", name: "Genleşme vanası", desc: "Isı pompası akışkanını genleştirip soğutur ve S3 evaporatörüne gönderir." },
+    B1: { group: "Vanalar ve hat", name: "Blöf vanası", desc: "T1'deki konsantre ve çamur, iletkenlik sınırına ulaşınca bu vanadan kanalizasyona atılır." },
+    H1: { group: "Vanalar ve hat", name: "Ana hat ve flanşlı T", desc: "Evin atık suyu sağdan girer, E1'de ön ısıtılır ve flanşlı T bağlantısından T1'e beslenir. Fazlası solda kanalizasyona gider.", spec: [["Akış yönü", "Sağdan sola"]] },
+    G1: { group: "Arıtma ve revizyonlar", name: "Gaz ayırıcı ve karbon filtre", desc: "Yoğuşmayan amonyak ve uçucu organikler (VOC) burada ayrılır. Aktif karbon yatağı, distilatla taşınan organikleri tutar.", spec: [["Dolgu", "Granül aktif karbon"], ["Çıkış", "Havalandırma vanası"]], rev: "Üstüne havalandırma vanası eklendi; yoğuşmayan gazlar artık sistemden atılıyor." },
+    SP: { group: "Arıtma ve revizyonlar", name: "Püskürtme başlığı", desc: "P2'nin bastığı temizlik suyunu T1 duvarlarına ve serpantinlere geniş açıyla dağıtır." },
+    IZ: { group: "Arıtma ve revizyonlar", name: "Kaba ızgara", desc: "Siyah sudaki iri katıları T1 girişinde tutar.", rev: "Yeni eklendi: katılar T bağlantısını tıkayabilir." },
+    D1: { group: "Arıtma ve revizyonlar", name: "Asit ve antiköpük dozlama", desc: "pH 5–6'da amonyak suda NH₄⁺ olarak kalır, kireçlenme de azalır. Antiköpük, deterjanlı gri suyun köpürmesini önler.", rev: "Yeni eklendi: aktif karbon amonyağı zayıf tutar." },
+    DM: { group: "Arıtma ve revizyonlar", name: "Damla tutucu (demister)", desc: "K1 emişindeki tel örgü ped; kaynayan sudan sıçrayan damlacıkların ürüne geçmesini önler.", rev: "Yeni eklendi." },
+    U1: { group: "Arıtma ve revizyonlar", name: "Mineralleştirme + UV", desc: "Kalsit kartuşu suya mineral ekler; UV lamba son dezenfeksiyon bariyeridir.", rev: "Yeni eklendi: mineralsiz distilat tatsız ve aşındırıcıdır." }
+  };
+  const GROUPS = ["Tanklar", "Kompresör ve pompalar", "Isı transferi", "Vanalar ve hat", "Arıtma ve revizyonlar"];
+
+  const OVERVIEW =
+    '<p class="eyebrow">Genel bakış</p>' +
+    '<h2 class="iname">Evin tüm atık suyunu damıtan ünite</h2>' +
+    "<p>Atık su T1'de 125 °C'de kaynar. Buhar K1 ile sıkıştırılıp S2'de saf suya döner. T4'ten çekilen ısı, K2 ısı pompasıyla T1'e geri basılır.</p>" +
+    "<dl>" +
+    "<div><dt>Kapasite</dt><dd>500 L/gün (4 kişi)</dd></div>" +
+    "<div><dt>Kaynama</dt><dd>125 °C · 2,3 bar(a)</dd></div>" +
+    "<div><dt>Özgül enerji (K1)</dt><dd>~10 kWh/m³</dd></div>" +
+    "<div><dt>Çıkışlar</dt><dd>Soğuk saf su · sıcak su</dd></div>" +
+    "</dl>" +
+    '<p class="muted">Bir parçaya veya etikete tıklayın. Değerler tahmini tasarım noktasıdır.</p>';
+
+  const infoEl = document.getElementById("info");
+  const listEl = document.getElementById("list");
+  infoEl.innerHTML = OVERVIEW;
+
+  // Build parts list
+  GROUPS.forEach(function (g) {
+    const wrap = document.createElement("div");
+    wrap.className = "group";
+    const h = document.createElement("h3");
+    h.textContent = g;
+    wrap.appendChild(h);
+    const items = document.createElement("div");
+    items.className = "items";
+    Object.keys(COMPS).forEach(function (id) {
+      if (COMPS[id].group !== g) return;
+      const b = document.createElement("button");
+      b.type = "button";
+      b.dataset.comp = id;
+      if (COMPS[id].rev) b.classList.add("rev");
+      b.innerHTML = "<b>" + id + "</b>" + COMPS[id].name;
+      b.addEventListener("click", function () { select(id, true); });
+      items.appendChild(b);
+    });
+    wrap.appendChild(items);
+    listEl.appendChild(wrap);
+  });
+
+  const stage = document.getElementById("stage");
+  if (typeof THREE === "undefined" || !THREE.OrbitControls) {
+    const d = document.createElement("div");
+    d.className = "nogl";
+    d.textContent = "3D kütüphanesi yüklenemedi. Sayfayı yenileyin.";
+    stage.appendChild(d);
+    return;
+  }
+
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const canvas = document.getElementById("c");
+  const labelsEl = document.getElementById("labels");
+
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+  } catch (e) {
+    const d = document.createElement("div");
+    d.className = "nogl";
+    d.textContent = "Bu tarayıcı WebGL desteklemiyor; 3D model gösterilemiyor.";
+    stage.appendChild(d);
+    return;
+  }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 200);
+  const controls = new THREE.OrbitControls(camera, canvas);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.minDistance = 2.5;
+  controls.maxDistance = 45;
+  controls.maxPolarAngle = Math.PI * 0.62;
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x7d8892, 0.9));
+  const key = new THREE.DirectionalLight(0xffffff, 0.8);
+  key.position.set(6, 14, 10);
+  scene.add(key);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.3);
+  rim.position.set(-8, 6, -8);
+  scene.add(rim);
+
+  const UP = new THREE.Vector3(0, 1, 0);
+  const S = 0.01;
+  // Map the original 2D drawing coordinates (px) to 3D metres-ish units.
+  function P(px, py, z) { return new THREE.Vector3((px - 650) * S, (900 - py) * S, z || 0); }
+  function col(hex) { return new THREE.Color(hex).convertSRGBToLinear(); }
+
+  const FL = { raw: 0x8b6b42, conc: 0x5b4630, steam: 0x9fb4c7, hot: 0xe07b39, cold: 0x2e86c1, ref: 0x8e5cc9, gas: 0x9aa63a, chem: 0xc44f6a };
+  const circuits = { water: [], mvc: [], hp: [] };
+  const flows = [];
+  const pickables = [];
+  const comps = {};
+  const shells = [];
+  let transparentTanks = true;
+
+  function comp(id, obj) {
+    if (!comps[id]) comps[id] = { meshes: [] };
+    obj.traverse(function (o) {
+      if (o.isMesh) { o.userData.comp = id; comps[id].meshes.push(o); pickables.push(o); }
+    });
+    scene.add(obj);
+    return obj;
+  }
+  function std(hex, metal, rough, extra) {
+    const m = new THREE.MeshStandardMaterial({ color: col(hex), metalness: metal, roughness: rough });
+    if (extra) Object.assign(m, extra);
+    return m;
+  }
+  function applyShell(m) {
+    m.transparent = transparentTanks;
+    m.opacity = transparentTanks ? 0.2 : 1;
+    m.depthWrite = !transparentTanks;
+    m.needsUpdate = true;
+  }
+  function shellMat(hex) {
+    const m = std(hex, 0.4, 0.32);
+    m.side = THREE.DoubleSide;
+    shells.push(m);
+    applyShell(m);
+    return m;
+  }
+
+  // ---------- Pipes and flow particles ----------
+  const pmCache = {};
+  function pipeMat(hex, big) {
+    const k = hex + "_" + big;
+    if (!pmCache[k]) {
+      pmCache[k] = std(hex, 0.25, 0.5, big ? { transparent: true, opacity: 0.4, depthWrite: false } : null);
+    }
+    return pmCache[k];
+  }
+  function tube(pts, r, hex, circ, mat) {
+    const g = new THREE.Group();
+    const m = mat || pipeMat(hex, r >= 0.15);
+    for (let i = 0; i < pts.length - 1; i++) {
+      const a = pts[i], b = pts[i + 1], len = a.distanceTo(b);
+      if (len < 1e-4) continue;
+      const c = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, 18, 1, true), m);
+      c.position.copy(a).add(b).multiplyScalar(0.5);
+      c.quaternion.setFromUnitVectors(UP, b.clone().sub(a).normalize());
+      g.add(c);
+    }
+    for (let i = 1; i < pts.length - 1; i++) {
+      const s = new THREE.Mesh(new THREE.SphereGeometry(r, 18, 12), m);
+      s.position.copy(pts[i]);
+      g.add(s);
+    }
+    scene.add(g);
+    if (circ) circuits[circ].push(g);
+    return g;
+  }
+  function flow(pts, hex, circ, o) {
+    o = o || {};
+    const speed = o.speed || 1.1, size = o.size || 0.065, spacing = o.spacing || 0.3;
+    const segs = [];
+    let total = 0;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const len = pts[i].distanceTo(pts[i + 1]);
+      segs.push({ a: pts[i], b: pts[i + 1], len: len, s: total });
+      total += len;
+    }
+    const n = Math.max(2, Math.round(total / spacing));
+    const inst = new THREE.InstancedMesh(new THREE.SphereGeometry(size, 10, 8), new THREE.MeshBasicMaterial({ color: col(hex) }), n);
+    inst.frustumCulled = false;
+    scene.add(inst);
+    circuits[circ].push(inst);
+    const f = { segs: segs, total: total, n: n, inst: inst, speed: speed, t: Math.random() * total };
+    flows.push(f);
+    placeFlow(f);
+    return f;
+  }
+  const tmpM = new THREE.Matrix4(), tmpV = new THREE.Vector3();
+  function placeFlow(f) {
+    for (let k = 0; k < f.n; k++) {
+      const d = (k * f.total / f.n + f.t) % f.total;
+      let lo = 0, hi = f.segs.length - 1;
+      while (lo < hi) {
+        const mid = (lo + hi) >> 1;
+        if (d > f.segs[mid].s + f.segs[mid].len) lo = mid + 1; else hi = mid;
+      }
+      const sg = f.segs[lo];
+      const u = sg.len ? (d - sg.s) / sg.len : 0;
+      tmpV.copy(sg.a).lerp(sg.b, u);
+      tmpM.makeTranslation(tmpV.x, tmpV.y, tmpV.z);
+      f.inst.setMatrixAt(k, tmpM);
+    }
+    f.inst.instanceMatrix.needsUpdate = true;
+  }
+  function helix(cx, cz, R, y0, y1, turns, a0) {
+    const N = Math.ceil(turns * 48), pts = [];
+    for (let i = 0; i <= N; i++) {
+      const t = i / N, a = a0 + t * turns * Math.PI * 2;
+      pts.push(new THREE.Vector3(cx + R * Math.cos(a), y0 + (y1 - y0) * t, cz + R * Math.sin(a)));
+    }
+    return pts;
+  }
+  function coil(id, pts, hex, circ) {
+    const curve = new THREE.CatmullRomCurve3(pts);
+    const mesh = new THREE.Mesh(new THREE.TubeGeometry(curve, pts.length * 2, 0.045, 8, false), std(hex, 0.55, 0.3));
+    comp(id, mesh);
+    circuits[circ].push(mesh);
+    return mesh;
+  }
+
+  // ---------- Equipment builders ----------
+  function capsuleGeo(r, yb, yt) {
+    const pts = [], n = 16;
+    for (let i = 0; i <= n; i++) { const a = -Math.PI / 2 + (i / n) * Math.PI / 2; pts.push(new THREE.Vector2(Math.max(1e-3, r * Math.cos(a)), yb + r * Math.sin(a))); }
+    for (let i = 0; i <= n; i++) { const a = (i / n) * Math.PI / 2; pts.push(new THREE.Vector2(Math.max(1e-3, r * Math.cos(a)), yt + r * Math.sin(a))); }
+    return new THREE.LatheGeometry(pts, 56);
+  }
+  function waterGeo(r, yb, level) {
+    const pts = [], n = 12;
+    for (let i = 0; i <= n; i++) { const a = -Math.PI / 2 + (i / n) * Math.PI / 2; pts.push(new THREE.Vector2(Math.max(1e-3, r * Math.cos(a)), yb + r * Math.sin(a))); }
+    pts.push(new THREE.Vector2(r, level));
+    pts.push(new THREE.Vector2(1e-3, level));
+    return new THREE.LatheGeometry(pts, 48);
+  }
+  const FLOOR = -0.15;
+  const legMat = std(0x56636d, 0.5, 0.45);
+  function leg(x, y, z) {
+    const h = y - FLOOR;
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, h, 10), legMat);
+    m.position.set(x, FLOOR + h / 2, z);
+    scene.add(m);
+    const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.03, 16), legMat);
+    foot.position.set(x, FLOOR + 0.015, z);
+    scene.add(foot);
+  }
+  function tank(id, cx, r, yb, yt, tint, water, legs) {
+    const g = new THREE.Group();
+    g.add(new THREE.Mesh(capsuleGeo(r, yb, yt), shellMat(tint)));
+    const seam = std(0x7b8893, 0.5, 0.4);
+    [yb, yt].forEach(function (y) {
+      const t = new THREE.Mesh(new THREE.TorusGeometry(r, 0.016, 8, 72), seam);
+      t.rotation.x = Math.PI / 2;
+      t.position.y = y;
+      g.add(t);
+    });
+    g.position.x = cx;
+    comp(id, g);
+    if (water) {
+      const w = new THREE.Mesh(waterGeo(r * 0.965, yb, water.level), new THREE.MeshStandardMaterial({ color: col(water.hex), transparent: true, opacity: 0.36, roughness: 0.2, metalness: 0, depthWrite: false }));
+      w.position.x = cx;
+      scene.add(w);
+    }
+    if (legs) {
+      [Math.PI / 2, Math.PI * 7 / 6, Math.PI * 11 / 6].forEach(function (a) {
+        leg(cx + r * 0.88 * Math.cos(a), yb, r * 0.88 * Math.sin(a));
+      });
+    }
+    return g;
+  }
+  function boxShell(id, center, w, h, d, tint) {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), shellMat(tint));
+    m.position.copy(center);
+    const edges = new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry), new THREE.LineBasicMaterial({ color: col(0x7b8893) }));
+    m.add(edges);
+    comp(id, m);
+    return m;
+  }
+  function compressor(id, p, hex) {
+    const g = new THREE.Group();
+    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.8, 36), std(hex, 0.55, 0.32));
+    body.rotation.x = Math.PI / 2;
+    g.add(body);
+    const capM = std(0x5d6b75, 0.6, 0.3);
+    [-0.42, 0.42].forEach(function (z) {
+      const c = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 0.06, 36), capM);
+      c.rotation.x = Math.PI / 2;
+      c.position.z = z;
+      g.add(c);
+    });
+    const motorM = std(0x3d4850, 0.4, 0.55);
+    const motor = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.7, 28), motorM);
+    motor.rotation.x = Math.PI / 2;
+    motor.position.z = -0.82;
+    g.add(motor);
+    for (let i = 0; i < 5; i++) {
+      const rib = new THREE.Mesh(new THREE.TorusGeometry(0.305, 0.012, 6, 32), motorM);
+      rib.position.z = -0.55 - i * 0.13;
+      g.add(rib);
+    }
+    const base = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.06, 1.9), std(0x4a565f, 0.4, 0.5));
+    base.position.set(0, -0.48, -0.35);
+    g.add(base);
+    g.position.copy(p);
+    comp(id, g);
+    return g;
+  }
+  function pump(id, p, hex, motorZ) {
+    const g = new THREE.Group();
+    const casing = new THREE.Mesh(new THREE.SphereGeometry(0.19, 24, 16), std(hex, 0.5, 0.35));
+    casing.scale.set(1, 1, 0.75);
+    g.add(casing);
+    const motor = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.34, 18), std(0x3d4850, 0.4, 0.5));
+    motor.rotation.x = Math.PI / 2;
+    motor.position.z = motorZ === undefined ? -0.3 : motorZ;
+    g.add(motor);
+    g.position.copy(p);
+    comp(id, g);
+    return g;
+  }
+  function innerPump(id, p, hex) {
+    const g = new THREE.Group();
+    const c = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.26, 24), std(hex, 0.5, 0.35));
+    g.add(c);
+    const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.12, 18), std(0x3d4850, 0.4, 0.5));
+    cap.position.y = 0.19;
+    g.add(cap);
+    g.position.copy(p);
+    comp(id, g);
+    return g;
+  }
+  function strainer(p, hex) {
+    const s = new THREE.Mesh(new THREE.SphereGeometry(0.09, 16, 12), std(hex, 0.3, 0.6, { wireframe: true }));
+    s.position.copy(p);
+    scene.add(s);
+  }
+  function valve(id, p, axis, hex) {
+    const g = new THREE.Group();
+    const body = new THREE.Group();
+    const m = std(hex || 0x46525b, 0.5, 0.4);
+    const c1 = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.2, 20), m);
+    c1.rotation.z = Math.PI;
+    c1.position.y = 0.1;
+    const c2 = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.2, 20), m);
+    c2.position.y = -0.1;
+    body.add(c1, c2);
+    if (axis === "x") body.rotation.z = Math.PI / 2;
+    g.add(body);
+    const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.24, 8), m);
+    stem.rotation.x = Math.PI / 2;
+    stem.position.z = 0.12;
+    g.add(stem);
+    const wheel = new THREE.Mesh(new THREE.TorusGeometry(0.09, 0.016, 8, 24), m);
+    wheel.position.z = 0.25;
+    g.add(wheel);
+    g.position.copy(p);
+    comp(id, g);
+    return g;
+  }
+  function arrowCone(p, dir, hex, size) {
+    const s = size || 0.16;
+    const m = new THREE.Mesh(new THREE.ConeGeometry(s, s * 1.8, 20), std(hex, 0.2, 0.5));
+    m.position.copy(p);
+    m.quaternion.setFromUnitVectors(UP, dir.clone().normalize());
+    scene.add(m);
+    return m;
+  }
+
+  // ---------- Build the plant ----------
+  // Tanks (axis x, radius, straight-section bottom/top y)
+  const X1 = -4.3, X3 = 0.04, X4 = 4.38, X5 = 2.21;
+  tank("T1", X1, 1.0, 3.0, 7.36, 0xdfe5e2, { level: 6.45, hex: FL.raw }, true);
+  tank("T3", X3, 1.0, 3.12, 7.36, 0xcfd6dc, { level: 4.5, hex: FL.hot }, true);
+  tank("T4", X4, 1.0, 3.12, 7.36, 0xcfd6dc, { level: 6.45, hex: FL.cold }, true);
+  tank("T5", X5, 0.46, 3.06, 4.99, 0xcfd6dc, { level: 4.75, hex: FL.hot }, true);
+
+  // T2 collector + G1 gas separator with carbon bed
+  boxShell("T2", P(427.5, 634), 0.93, 0.76, 0.8, 0xcfd6dc);
+  const t2w = new THREE.Mesh(new THREE.BoxGeometry(0.88, 0.37, 0.75), new THREE.MeshStandardMaterial({ color: col(FL.hot), transparent: true, opacity: 0.4, depthWrite: false }));
+  t2w.position.copy(P(427.5, 652));
+  scene.add(t2w);
+  leg(-2.65, 2.28, 0.3); leg(-1.8, 2.28, 0.3); leg(-2.65, 2.28, -0.3); leg(-1.8, 2.28, -0.3);
+  boxShell("G1", P(419.5, 438), 1.23, 2.02, 0.8, 0xcfd6dc);
+  const bed = new THREE.Mesh(new THREE.BoxGeometry(1.15, 1.1, 0.72), std(0x2a2d2f, 0.1, 0.95));
+  bed.position.copy(P(419.5, 480));
+  comp("G1", bed);
+  tube([P(424, 596), P(424, 539)], 0.08, FL.gas, "water");
+
+  // Compressors
+  compressor("K1", P(437, 192), 0x6f8796);
+  compressor("K2", P(871, 192), 0x7d6a96);
+
+  // Coils: S1 (heat pump condenser) and S2 (steam condenser) wound together in T1; S3 in T4
+  const p = (6.0 - 3.1) / 12;
+  const s2pts = helix(X1, 0, 0.72, 6.0, 3.1, 12, 0);
+  const s1pts = helix(X1, 0, 0.72, 6.0, 6.0 - 12.5 * p, 12.5, Math.PI);
+  const s3pts = helix(X4, 0, 0.72, 2.86, 6.0, 13, Math.PI);
+  coil("S2", s2pts, 0xb8c3cc, "mvc");
+  coil("S1", s1pts, 0xa58bc4, "hp");
+  coil("S3", s3pts, 0xa58bc4, "hp");
+
+  // Heat exchanger E1 with corrugated plate and direction arrows
+  boxShell("E1", P(871, 823), 2.56, 1.76, 1.2, 0xcfd6dc);
+  (function () {
+    const plateM = std(0x8e9aa3, 0.6, 0.35);
+    const x0 = P(743, 0).x, x1 = P(999, 0).x, yc = P(0, 812).y, teeth = 8, amp = 0.09;
+    const g = new THREE.Group();
+    for (let i = 0; i < teeth * 2; i++) {
+      const xa = x0 + (x1 - x0) * i / (teeth * 2), xb = x0 + (x1 - x0) * (i + 1) / (teeth * 2);
+      const ya = yc + (i % 2 ? amp : -amp), yb = yc + (i % 2 ? -amp : amp);
+      const len = Math.hypot(xb - xa, yb - ya);
+      const seg = new THREE.Mesh(new THREE.BoxGeometry(len, 0.025, 1.12), plateM);
+      seg.position.set((xa + xb) / 2, (ya + yb) / 2, 0);
+      seg.rotation.z = Math.atan2(yb - ya, xb - xa);
+      g.add(seg);
+    }
+    comp("E1", g);
+    arrowCone(P(871, 760, 0.35), new THREE.Vector3(1, 0, 0), FL.hot, 0.12);
+    arrowCone(P(871, 760, -0.35), new THREE.Vector3(1, 0, 0), FL.hot, 0.12);
+    arrowCone(P(871, 880, 0.35), new THREE.Vector3(-1, 0, 0), FL.raw, 0.12);
+    arrowCone(P(871, 880, -0.35), new THREE.Vector3(-1, 0, 0), FL.raw, 0.12);
+  })();
+
+  // Main line H1 with flanged tee
+  (function () {
+    const m = std(FL.raw, 0.3, 0.5, { transparent: true, opacity: 0.42, depthWrite: false });
+    const g = new THREE.Group();
+    const a = tube([P(1240, 870), P(999, 870)], 0.24, FL.raw, null, m);
+    const b = tube([P(743, 870), P(60, 870)], 0.24, FL.raw, null, m);
+    g.add(a, b);
+    const fm = std(0x5e6a73, 0.55, 0.35);
+    [367, 488].forEach(function (px) {
+      const f = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.12, 32), fm);
+      f.rotation.z = Math.PI / 2;
+      f.position.copy(P(px, 870));
+      g.add(f);
+      for (let i = 0; i < 8; i++) {
+        const ang = i / 8 * Math.PI * 2;
+        const bolt = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.18, 8), fm);
+        bolt.rotation.z = Math.PI / 2;
+        bolt.position.copy(P(px, 870)).add(new THREE.Vector3(0, 0.27 * Math.cos(ang), 0.27 * Math.sin(ang)));
+        g.add(bolt);
+      }
+    });
+    comp("H1", g);
+    circuits.water.push(g);
+  })();
+  flow([P(1240, 870), P(60, 870)], FL.raw, "water", { size: 0.1, spacing: 0.42, speed: 0.9 });
+  arrowCone(P(1262, 870), new THREE.Vector3(-1, 0, 0), FL.raw, 0.2);
+  arrowCone(P(38, 870), new THREE.Vector3(-1, 0, 0), FL.raw, 0.2);
+
+  // Feed neck from the tee up into T1, with coarse screen IZ
+  tube([P(437, 846), P(437, 775), P(220, 775), P(220, 700)], 0.2, FL.raw, "water");
+  flow([P(437, 846), P(437, 775), P(220, 775), P(220, 700)], FL.raw, "water", { size: 0.085, spacing: 0.32, speed: 0.6 });
+  (function () {
+    const s = new THREE.Mesh(new THREE.CylinderGeometry(0.27, 0.27, 0.34, 20, 3, true), std(0x56636d, 0.5, 0.4, { wireframe: true }));
+    s.position.copy(P(437, 812));
+    comp("IZ", s);
+  })();
+
+  // Blowdown drain under the tee
+  tube([P(437, 894), P(437, 995)], 0.07, FL.conc, "water");
+  flow([P(437, 894), P(437, 995)], FL.conc, "water", { size: 0.07, spacing: 0.25, speed: 0.5 });
+  valve("B1", P(437, 950), "y");
+
+  // MVC steam circuit: T1 vapour space -> demister -> K1 -> S2 -> V1 -> T2
+  (function () {
+    const d = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.14, 20, 2), std(0x9aa5ad, 0.4, 0.6, { wireframe: true }));
+    d.position.copy(P(300, 126));
+    comp("DM", d);
+  })();
+  tube([P(300, 118), P(437, 118), P(437, 150)], 0.07, FL.steam, "mvc");
+  flow([P(300, 118), P(437, 118), P(437, 150)], FL.steam, "mvc", { size: 0.08 });
+  tube([P(437, 234), P(437, 300), P(292, 300)], 0.07, FL.steam, "mvc");
+  flow([P(437, 234), P(437, 300), P(292, 300)], FL.steam, "mvc", { size: 0.08 });
+  flow(s2pts, FL.steam, "mvc", { size: 0.06, spacing: 0.36, speed: 1.4 });
+  tube([P(292, 590), P(400, 590), P(400, 612)], 0.05, FL.hot, "water");
+  flow([P(292, 590), P(400, 590), P(400, 612)], FL.hot, "water", { size: 0.065 });
+  valve("V1", P(352, 590), "x");
+
+  // Heat pump circuit: K2 -> S1 (T1) -> V2 -> S3 (T4) -> K2
+  tube([P(871, 150), P(871, 33), P(148, 33), P(148, 300)], 0.06, FL.ref, "hp");
+  flow([P(871, 150), P(871, 33), P(148, 33), P(148, 300)], FL.ref, "hp", { size: 0.075 });
+  flow(s1pts, FL.ref, "hp", { size: 0.06, spacing: 0.36, speed: 1.4 });
+  const s1out = [P(292, 602), P(292, 697), P(292, 697, -0.5), P(1016, 697, -0.5), P(1016, 697), P(1016, 614)];
+  tube(s1out, 0.06, FL.ref, "hp");
+  flow(s1out, FL.ref, "hp", { size: 0.075 });
+  valve("V2", P(871, 697, -0.5), "x", 0x5a4a72);
+  flow(s3pts, FL.ref, "hp", { size: 0.06, spacing: 0.36, speed: 1.4 });
+  const s3out = [P(1016, 300), P(1016, 288), P(871, 288), P(871, 234)];
+  tube(s3out, 0.06, FL.ref, "hp");
+  flow(s3out, FL.ref, "hp", { size: 0.075 });
+
+  // Distillate: T2 -> P1 -> T3
+  const t2t3 = [P(474, 655), P(512, 655), P(512, 116), P(590, 116)];
+  tube(t2t3, 0.06, FL.hot, "water");
+  flow(t2t3, FL.hot, "water", { size: 0.075 });
+  pump("P1", P(512, 577), 0xb06a3c);
+
+  // Cleaning: T3 dip tube -> P2 -> spray head SP inside T1
+  innerPump("P2", P(654, 164), 0xb06a3c);
+  strainer(P(654, 566), FL.hot);
+  const clean = [P(654, 558), P(654, 178), P(654, 150), P(654, 53), P(221, 53), P(221, 140)];
+  tube([P(654, 558), P(654, 178)], 0.045, FL.hot, "water");
+  tube([P(654, 150), P(654, 53), P(221, 53), P(221, 140)], 0.06, FL.hot, "water");
+  flow(clean, FL.hot, "water", { size: 0.07, speed: 1.6 });
+  (function () {
+    const g = new THREE.Group();
+    const cone = new THREE.Mesh(new THREE.ConeGeometry(0.32, 0.26, 28, 1, true), std(0x8a959e, 0.6, 0.3, { side: THREE.DoubleSide }));
+    g.add(cone);
+    g.position.copy(P(221, 152));
+    comp("SP", g);
+  })();
+
+  // Revised: T3 feeds hot tank T5 directly
+  tube([P(740, 500), P(845, 500)], 0.06, FL.hot, "water");
+  flow([P(740, 500), P(845, 500)], FL.hot, "water", { size: 0.07, speed: 0.6 });
+
+  // T3 bottom -> E1 upper chamber -> T4 bottom
+  tube([P(654, 690), P(654, 776), P(743, 776)], 0.18, FL.hot, "water");
+  tube([P(999, 776), P(1086, 776), P(1086, 690)], 0.18, FL.cold, "water");
+  flow([P(654, 690), P(654, 776), P(999, 776)], FL.hot, "water", { size: 0.085, speed: 0.7 });
+  flow([P(999, 776), P(1086, 776), P(1086, 690)], FL.cold, "water", { size: 0.085, speed: 0.7 });
+
+  // Output 1: T4 dip tube -> P3 -> mineral + UV -> out
+  innerPump("P3", P(1086, 162), 0x2f6f9b);
+  strainer(P(1086, 668), FL.cold);
+  tube([P(1086, 660), P(1086, 176)], 0.045, FL.cold, "water");
+  tube([P(1086, 148), P(1086, 53), P(1245, 53)], 0.06, FL.cold, "water");
+  flow([P(1086, 660), P(1086, 176), P(1086, 148), P(1086, 53), P(1245, 53)], FL.cold, "water", { size: 0.07 });
+  arrowCone(P(1262, 53), new THREE.Vector3(1, 0, 0), FL.cold, 0.11);
+  (function () {
+    const g = new THREE.Group();
+    const cart = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.4, 24), std(0xd9d4c7, 0.1, 0.7));
+    cart.rotation.z = Math.PI / 2;
+    cart.position.copy(P(1145, 53));
+    g.add(cart);
+    const uv = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.36, 24), std(0x9c7bd6, 0.2, 0.3, { emissive: col(0x5b3aa6), emissiveIntensity: 0.6 }));
+    uv.rotation.z = Math.PI / 2;
+    uv.position.copy(P(1200, 53));
+    g.add(uv);
+    comp("U1", g);
+  })();
+
+  // Output 2: T5 -> P4 -> out (kept 0.35 in front of the heat pump line)
+  const out2 = [P(895, 625), P(930, 625), P(930, 625, 0.35), P(953, 625, 0.35), P(953, 33, 0.35), P(1245, 33, 0.35)];
+  tube(out2, 0.06, FL.hot, "water");
+  flow(out2, FL.hot, "water", { size: 0.075 });
+  pump("P4", P(953, 567, 0.35), 0xb06a3c, 0.3);
+  arrowCone(P(1262, 33, 0.35), new THREE.Vector3(1, 0, 0), FL.hot, 0.11);
+
+  // G1 vent to atmosphere through valve
+  tube([P(460, 337), P(460, 282)], 0.05, FL.gas, "water");
+  flow([P(424, 600), P(424, 450), P(460, 340), P(460, 282)], FL.gas, "water", { size: 0.06, speed: 0.5, spacing: 0.34 });
+  valve("G1", P(460, 312), "y", 0x6b7330);
+  arrowCone(P(460, 268), UP, FL.gas, 0.08);
+
+  // D1 acid / antifoam dosing behind T1
+  (function () {
+    const g = new THREE.Group();
+    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.26, 0.75, 24), std(0xe6e1d6, 0.05, 0.7));
+    body.position.copy(P(220, 480, -1.75));
+    g.add(body);
+    const lid = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.1, 18), std(FL.chem, 0.2, 0.5));
+    lid.position.copy(P(220, 438, -1.75));
+    g.add(lid);
+    comp("D1", g);
+    leg(X1 - 0.18, 3.83, -1.75); leg(X1 + 0.18, 3.83, -1.75);
+  })();
+  tube([P(220, 470, -1.49), P(220, 470, -0.75)], 0.03, FL.chem, "water");
+  flow([P(220, 470, -1.49), P(220, 470, -0.75)], FL.chem, "water", { size: 0.05, speed: 0.3, spacing: 0.2 });
+
+  // Floor grid
+  let grid = null;
+  function makeGrid() {
+    const cs = getComputedStyle(document.documentElement);
+    if (grid) { scene.remove(grid); grid.geometry.dispose(); }
+    grid = new THREE.GridHelper(18, 36, new THREE.Color(cs.getPropertyValue("--grid-a").trim() || "#b7c2ca"), new THREE.Color(cs.getPropertyValue("--grid-b").trim() || "#d0d8dd"));
+    grid.position.y = FLOOR;
+    scene.add(grid);
+  }
+
+  // ---------- Particles: boiling in T1, cleaning spray ----------
+  const NB = 80;
+  const bubGeo = new THREE.BufferGeometry();
+  const bubPos = new Float32Array(NB * 3);
+  function resetBubble(i, anyY) {
+    const a = Math.random() * Math.PI * 2, r = Math.sqrt(Math.random()) * 0.85;
+    bubPos[i * 3] = X1 + r * Math.cos(a);
+    bubPos[i * 3 + 1] = anyY ? 3.0 + Math.random() * 3.4 : 3.0;
+    bubPos[i * 3 + 2] = r * Math.sin(a);
+  }
+  for (let i = 0; i < NB; i++) resetBubble(i, true);
+  bubGeo.setAttribute("position", new THREE.BufferAttribute(bubPos, 3));
+  const bubbles = new THREE.Points(bubGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.07, transparent: true, opacity: 0.75, depthWrite: false }));
+  scene.add(bubbles);
+
+  const NS = 90;
+  const sprGeo = new THREE.BufferGeometry();
+  const sprPos = new Float32Array(NS * 3);
+  const sprVel = new Float32Array(NS * 3);
+  const nozzle = P(221, 160);
+  function resetDrop(i) {
+    const a = Math.random() * Math.PI * 2, v = 0.9 + Math.random() * 0.9;
+    sprPos[i * 3] = nozzle.x; sprPos[i * 3 + 1] = nozzle.y; sprPos[i * 3 + 2] = nozzle.z;
+    sprVel[i * 3] = Math.cos(a) * v; sprVel[i * 3 + 1] = -0.1 - Math.random() * 0.4; sprVel[i * 3 + 2] = Math.sin(a) * v;
+  }
+  for (let i = 0; i < NS; i++) resetDrop(i);
+  sprGeo.setAttribute("position", new THREE.BufferAttribute(sprPos, 3));
+  const spray = new THREE.Points(sprGeo, new THREE.PointsMaterial({ color: col(FL.hot), size: 0.06, transparent: true, opacity: 0.85, depthWrite: false }));
+  scene.add(spray);
+  circuits.water.push(spray);
+  // pre-advance droplets so the first frame already shows a spray
+  for (let s = 0; s < 40; s++) stepSpray(0.02 + Math.random() * 0.01);
+
+  function stepSpray(dt) {
+    for (let i = 0; i < NS; i++) {
+      sprVel[i * 3 + 1] -= 4.0 * dt;
+      sprPos[i * 3] += sprVel[i * 3] * dt;
+      sprPos[i * 3 + 1] += sprVel[i * 3 + 1] * dt;
+      sprPos[i * 3 + 2] += sprVel[i * 3 + 2] * dt;
+      const dx = sprPos[i * 3] - X1, dz = sprPos[i * 3 + 2];
+      if (sprPos[i * 3 + 1] < 6.45 || dx * dx + dz * dz > 0.9) resetDrop(i);
+    }
+    sprGeo.attributes.position.needsUpdate = true;
+  }
+  function stepBubbles(dt) {
+    for (let i = 0; i < NB; i++) {
+      bubPos[i * 3 + 1] += dt * (0.5 + (i % 7) * 0.12);
+      if (bubPos[i * 3 + 1] > 6.42) resetBubble(i, false);
+    }
+    bubGeo.attributes.position.needsUpdate = true;
+  }
+
+  // ---------- Labels ----------
+  const labels = [];
+  let showLabels = true;
+  function addChip(id, pos) {
+    const el = document.createElement("button");
+    el.type = "button";
+    el.className = "lbl chip" + (COMPS[id].rev ? " rev" : "");
+    el.textContent = id;
+    el.title = COMPS[id].name;
+    el.dataset.comp = id;
+    el.setAttribute("aria-label", id + ", " + COMPS[id].name);
+    el.addEventListener("click", function () { select(id, true); });
+    labelsEl.appendChild(el);
+    labels.push({ el: el, pos: pos, dy: 0 });
+  }
+  function addTag(text, pos, dy) {
+    const el = document.createElement("div");
+    el.className = "lbl tag";
+    el.textContent = text;
+    labelsEl.appendChild(el);
+    labels.push({ el: el, pos: pos, dy: dy || 0, tag: true });
+  }
+  addChip("T1", P(220, 48));
+  addChip("S1", P(148, 360));
+  addChip("S2", P(292, 450));
+  addChip("SP", P(170, 152));
+  addChip("DM", P(300, 98));
+  addChip("K1", P(437, 128));
+  addChip("K2", P(871, 128));
+  addChip("V1", P(352, 560));
+  addChip("T2", P(427, 700));
+  addChip("G1", P(390, 360));
+  addChip("P1", P(548, 577));
+  addChip("T3", P(654, 48));
+  addChip("P2", P(700, 200));
+  addChip("T4", P(1088, 48));
+  addChip("S3", P(1160, 450));
+  addChip("P3", P(1130, 200));
+  addChip("T5", P(871, 335));
+  addChip("P4", P(990, 567, 0.35));
+  addChip("E1", P(871, 715));
+  addChip("V2", P(871, 668, -0.5));
+  addChip("H1", P(600, 820));
+  addChip("IZ", P(490, 812));
+  addChip("B1", P(480, 950));
+  addChip("D1", P(150, 520, -1.75));
+  addChip("U1", P(1172, 88));
+  addTag("Atık su girişi", P(1225, 925));
+  addTag("Kanalizasyon", P(80, 925));
+  addTag("Çıkış 1 · soğuk saf su", P(1250, 53), 16);
+  addTag("Çıkış 2 · sıcak su", P(1250, 33, 0.35), -16);
+  addTag("Gaz → karbon → atmosfer", P(460, 250));
+
+  function updateLabels() {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    for (let i = 0; i < labels.length; i++) {
+      const l = labels[i];
+      tmpV.copy(l.pos).project(camera);
+      const vis = showLabels && tmpV.z < 1 && Math.abs(tmpV.x) < 1.05 && Math.abs(tmpV.y) < 1.05;
+      l.el.style.display = vis ? "" : "none";
+      if (vis) {
+        const x = (tmpV.x * 0.5 + 0.5) * w, y = (-tmpV.y * 0.5 + 0.5) * h + l.dy;
+        l.el.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px) translate(" + (l.tag ? "0" : "-50%") + ",-50%)";
+      }
+    }
+  }
+
+  // ---------- Selection and highlighting ----------
+  let selected = null, showRev = false;
+  const HI = col(0x1b8f9e), REV = col(0xc9871a), BLACK = new THREE.Color(0);
+  function paint() {
+    Object.keys(comps).forEach(function (id) {
+      const hi = id === selected, rv = showRev && !!COMPS[id].rev;
+      comps[id].meshes.forEach(function (m) {
+        const mt = m.material;
+        if (!mt || !mt.emissive) return;
+        if (mt.userData.baseEmissive === undefined) {
+          mt.userData.baseEmissive = mt.emissive.clone();
+          mt.userData.baseIntensity = mt.emissiveIntensity;
+        }
+        if (hi) { mt.emissive.copy(HI); mt.emissiveIntensity = 0.7; }
+        else if (rv) { mt.emissive.copy(REV); mt.emissiveIntensity = 0.6; }
+        else { mt.emissive.copy(mt.userData.baseEmissive); mt.emissiveIntensity = mt.userData.baseIntensity; }
+      });
+    });
+    document.querySelectorAll("[data-comp]").forEach(function (b) { b.classList.toggle("sel", b.dataset.comp === selected); });
+  }
+  function renderInfo(id) {
+    if (!id) { infoEl.innerHTML = OVERVIEW; return; }
+    const c = COMPS[id];
+    let html = '<p class="eyebrow"><span class="code">' + id + "</span>" + c.group + "</p>";
+    html += '<h2 class="iname">' + c.name + "</h2><p>" + c.desc + "</p>";
+    if (c.spec) html += "<dl>" + c.spec.map(function (r) { return "<div><dt>" + r[0] + "</dt><dd>" + r[1] + "</dd></div>"; }).join("") + "</dl>";
+    if (c.rev) html += '<p class="rev"><span>Revizyon</span>' + c.rev + "</p>";
+    html += '<button type="button" class="link" id="clearSel">Genel bakışa dön</button>';
+    infoEl.innerHTML = html;
+    document.getElementById("clearSel").addEventListener("click", function () { select(null); });
+  }
+  function select(id, focus) {
+    selected = id;
+    paint();
+    renderInfo(id);
+    if (id && focus) focusOn(id);
+  }
+
+  // ---------- Camera ----------
+  let tween = null;
+  function startTween(target, pos) {
+    tween = { t: 0, dur: reduce ? 0.001 : 0.75, ft: controls.target.clone(), tt: target.clone(), fp: camera.position.clone(), tp: pos.clone() };
+  }
+  function focusOn(id) {
+    const box = new THREE.Box3();
+    comps[id].meshes.forEach(function (m) { box.expandByObject(m); });
+    const c = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3()).length();
+    const dir = camera.position.clone().sub(controls.target).normalize();
+    const dist = Math.min(16, Math.max(3.4, size * 2.3));
+    startTween(c, c.clone().add(dir.multiplyScalar(dist)));
+  }
+  const VIEWS = {
+    iso: { t: new THREE.Vector3(0, 4.6, 0), p: new THREE.Vector3(9.2, 10.6, 17) },
+    front: { t: new THREE.Vector3(0, 4.1, 0), p: new THREE.Vector3(0, 4.1, 19.5) },
+    top: { t: new THREE.Vector3(0, 3.0, 0), p: new THREE.Vector3(0, 23, 0.01) }
+  };
+  camera.position.copy(VIEWS.iso.p);
+  controls.target.copy(VIEWS.iso.t);
+  document.querySelectorAll(".views button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      document.querySelectorAll(".views button").forEach(function (x) { x.classList.toggle("on", x === b); });
+      const v = VIEWS[b.dataset.view];
+      startTween(v.t, v.p);
+    });
+  });
+
+  // Picking (click without drag)
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+  let down = null;
+  canvas.addEventListener("pointerdown", function (e) { down = { x: e.clientX, y: e.clientY }; });
+  canvas.addEventListener("pointerup", function (e) {
+    if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) { down = null; return; }
+    down = null;
+    const r = canvas.getBoundingClientRect();
+    ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(ndc, camera);
+    const hits = ray.intersectObjects(pickables, false).filter(function (h) { return isVisible(h.object); });
+    if (!hits.length) return;
+    // With see-through tanks, prefer the part inside over the shell in front of it.
+    const inner = transparentTanks ? hits.find(function (h) { return shells.indexOf(h.object.material) < 0; }) : null;
+    select((inner || hits[0]).object.userData.comp, false);
+  });
+  function isVisible(o) { while (o) { if (!o.visible) return false; o = o.parent; } return true; }
+
+  // ---------- Toggles ----------
+  function bind(id, fn) { const el = document.getElementById(id); el.addEventListener("change", function () { fn(el.checked); }); return el; }
+  function setCircuit(name, on) { circuits[name].forEach(function (o) { o.visible = on; }); }
+  bind("tgWater", function (v) { setCircuit("water", v); });
+  bind("tgMvc", function (v) { setCircuit("mvc", v); });
+  bind("tgHp", function (v) { setCircuit("hp", v); });
+  let animate = !reduce;
+  const tgFlow = bind("tgFlow", function (v) { animate = v; });
+  tgFlow.checked = animate;
+  bind("tgTrans", function (v) { transparentTanks = v; shells.forEach(applyShell); });
+  bind("tgLabels", function (v) { showLabels = v; });
+  bind("tgRev", function (v) { showRev = v; paint(); });
+
+  // ---------- Theme ----------
+  function applyTheme() {
+    const cs = getComputedStyle(document.documentElement);
+    scene.background = new THREE.Color(cs.getPropertyValue("--scene").trim() || "#e1e7eb");
+    makeGrid();
+  }
+  applyTheme();
+  try { window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme); } catch (e) { /* older browsers */ }
+  new MutationObserver(applyTheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  // ---------- Resize + loop ----------
+  function resize() {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    if (!w || !h) return;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(resize).observe(stage);
+  resize();
+
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    if (tween) {
+      tween.t += dt;
+      let u = Math.min(1, tween.t / tween.dur);
+      u = u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+      controls.target.lerpVectors(tween.ft, tween.tt, u);
+      camera.position.lerpVectors(tween.fp, tween.tp, u);
+      if (u >= 1) tween = null;
+    }
+    if (animate) {
+      for (let i = 0; i < flows.length; i++) {
+        const f = flows[i];
+        if (!f.inst.visible) continue;
+        f.t = (f.t + dt * f.speed) % f.total;
+        placeFlow(f);
+      }
+      stepBubbles(dt);
+      if (spray.visible) stepSpray(dt);
+    }
+    controls.update();
+    renderer.render(scene, camera);
+    updateLabels();
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+
+</body>
+</html>
